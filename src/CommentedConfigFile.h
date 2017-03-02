@@ -81,6 +81,9 @@ public:
 
     /**
      * Class representing one content line and the preceding comments.
+     *
+     * This class is meant to be subclassed. When you do that, remember to also
+     * overwrite the CommentedConfigFile::createEntry() factory method.
      **/
     class Entry
     {
@@ -105,6 +108,10 @@ public:
          **/
         virtual bool parse( const string & line ) { content = line; return true; }
 
+        //
+        // Data members
+        //
+
         string_vec comment_before;
         string     line_comment;   // at the end of the line
         string     content;
@@ -121,6 +128,12 @@ public:
         if ( ! filename.empty() )
             read( filename );
     }
+
+    /**
+     * Destructor. This deletes all entries.
+     **/
+    virtual ~CommentedConfigFile() { clear_entries(); }
+
 
     /**
      * Read 'filename' and replace the current content with it.
@@ -140,36 +153,62 @@ public:
      * Parse 'lines' and replace the current content with it.
      **/
     bool parse( const string_vec & lines );
-    string_vec to_string_vec() const;
+
+    /**
+     * Format the entire file as string lines, including header, footer and all
+     * other comments.
+     **/
+    string_vec format_lines() const;
+
+    /**
+     * Factory method to create one entry.
+     *
+     * Derived classes can override this to create their own derived entry
+     * class. Ownership of the created object is transferred to this class
+     * which will delete it as appropriate.
+     **/
+    virtual Entry * create_entry() { return new Entry(); }
+
+    //
+    // Container operations
+    //
 
     int size() const { return entries.size(); }
     bool empty() const { return entries.empty(); }
 
-    string_vec::iterator begin() { return entries.begin(); }
-    string_vec::iterator end()   { return entries.end(); }
+    vector<Entry *>::const_iterator begin() const { return entries.begin(); }
+    vector<Entry *>::const_iterator end()   const { return entries.end(); }
 
-    string_vec::const_iterator begin() const { return entries.begin(); }
-    string_vec::const_iterator end()   const { return entries.end(); }
+    Entry * operator[]( int i ) { return entries[i]; }
 
-    Entry & operator[]( int i ) { return entries[i]; }
-    const Entry & operator[]( int i ) const { return entries[i]; }
+    void clear_entries()
+    {
+        for ( int i=0; i < entries.size() )
+            delete entries[i];
+        entries.clear();
+    }
 
-    void clear() { entries.clear(); }
-    void clear_all() { header_comments.clear(); footer_comments.clear(); entries.clear(); }
+    void clear_all()
+    {
+        clear_entries();
+        header_comments.clear();
+        footer_comments.clear();
+    }
 
     void erase( int index ) { entries.erase( index ); }
     void remove( int index ) { erase( index ); }
-    void insert( int before, const Entry & entry ) { entries.insert( before, entry ); }
-    void push_back( const Entry & entry ) { entries.push_back( entry ); }
-    void append( const Entry & entry ) { push_back( entry ); }
-    void operator<<( const Entry & entry ) { push_back( entry ); }
-
-    string get_comment_marker() const { return comment_marker; }
-    void set_comment_marker( const string & marker ) { comment_marker = marker; }
+    void insert( int before, const Entry * entry ) { entries.insert( before, entry ); }
+    void push_back( const Entry * entry ) { entries.push_back( entry ); }
+    void append( const Entry * entry ) { push_back( entry ); }
+    void operator<<( const Entry * entry ) { push_back( entry ); }
 
     string_vec & get_header_comments() { return header_comments; }
     string_vec & get_footer_comments() { return footer_comments; }
+
     const string & get_filename() const { return filename; }
+
+    string get_comment_marker() const { return comment_marker; }
+    void set_comment_marker( const string & marker ) { comment_marker = marker; }
 
 private:
 
@@ -177,12 +216,12 @@ private:
     bool is_empty_line( const string & line );
     void split_off_comment( const string & line, string & content_ret, string & comment_ret );
 
-    string        filename;
-    string        comment_marker;
+    string          filename;
+    string          comment_marker;
 
-    string_vec    header_comments;
-    vector<Entry> entries;
-    string_vec    footer_comments;
+    string_vec      header_comments;
+    vector<Entry *> entries;
+    string_vec      footer_comments;
 
 };
 
