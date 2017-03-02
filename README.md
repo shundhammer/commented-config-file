@@ -29,7 +29,7 @@ can be set with setCommentMarker().
 
 ## Example
 
-(line numbers added for easier reference):
+(line numbers added for easier reference)
 
     001    # Header comment 1
     002    # Header comment 2

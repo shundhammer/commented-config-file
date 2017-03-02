@@ -210,11 +210,14 @@ public:
     string get_comment_marker() const { return comment_marker; }
     void set_comment_marker( const string & marker ) { comment_marker = marker; }
 
-private:
+protected:
 
     bool is_comment_line( const string & line );
     bool is_empty_line( const string & line );
     void split_off_comment( const string & line, string & content_ret, string & comment_ret );
+    void strip_trailing_whitespace( const string & line );
+
+private:
 
     string          filename;
     string          comment_marker;
