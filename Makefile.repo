@@ -1,0 +1,10 @@
+#
+# Makefile.repo for commented-config-file
+#
+
+all:
+	aclocal
+	autoconf
+	autoheader
+	automake --add-missing --foreign
+	./configure --prefix=$(PREFIX)
