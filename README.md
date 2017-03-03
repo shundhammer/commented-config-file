@@ -9,8 +9,7 @@ License: GPL V2
 - C++
 - STL
 - Boost
-
-- Autotools (just for demo program and test suite)
+- Autotools (just for the demo programs and the test suite)
 
 This class should work on Linux/BSD/Unix-like systems and on all kinds of MS
 Windows. It's just a C++ class after all.
