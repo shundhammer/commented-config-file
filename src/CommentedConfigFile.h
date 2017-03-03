@@ -100,7 +100,12 @@ public:
          * to be parsed, and that would require calling the overloaded virtual
          * parse() function which is not possible in the constructor.
          **/
-        Entry();
+        Entry() {}
+
+        /**
+         *
+         **/
+        virtual ~Entry() {}
 
         /**
          * Format the content as a string.
@@ -113,7 +118,7 @@ public:
          * Parse a content line. Return 'true' on success, 'false' on error.
          * Derived classes might choose to override this.
          **/
-        virtual bool parse( const string & line );
+        virtual bool parse( const string & line )
             { content = line; return true; }
 
         //
@@ -216,18 +221,18 @@ public:
      * Insert 'entry' before index 'before'.
      * This transfers ownership of the entry to this class.
      **/
-    void insert( int before, const Entry * entry );
+    void insert( int before, Entry * entry );
 
     /**
      * Append 'entry' at the end of the entries.
      * This transfers ownership of the entry to this class.
      **/
-    void append( const Entry * entry );
+    void append( Entry * entry );
 
     /**
      * Alias for append().
      **/
-    void operator<<( const Entry * entry ) { append( entry ); }
+    void operator<<( Entry * entry ) { append( entry ); }
     
     /**
      * Return the header comments (including empty lines).

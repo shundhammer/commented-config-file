@@ -26,7 +26,7 @@ CommentedConfigFile::~CommentedConfigFile()
 
 int CommentedConfigFile::index_of( const Entry * wanted_entry )
 {
-    for ( int i=0; i < entries.size; ++i )
+    for ( size_t i=0; i < entries.size(); ++i )
     {
         if ( entries[i] == wanted_entry )
             return i;
@@ -36,10 +36,10 @@ int CommentedConfigFile::index_of( const Entry * wanted_entry )
 }
 
 
-Entry * CommentedConfigFile::take( int index )
+CommentedConfigFile::Entry * CommentedConfigFile::take( int index )
 {
     Entry * entry = entries[ index ];
-    entries.erase( index );
+    entries.erase( entries.begin() + index );
 
     return entry;
 }
@@ -51,13 +51,13 @@ void CommentedConfigFile::remove( int index )
 }
 
 
-void CommentedConfigFile::insert( int before, const Entry * entry )
+void CommentedConfigFile::insert( int before, Entry * entry )
 {
-    entries.insert( before, entry );
+    entries.insert( entries.begin() + before, entry );
 }
 
 
-void CommentedConfigFile::append( const Entry * entry )
+void CommentedConfigFile::append( Entry * entry )
 {
     entries.push_back( entry );
 }
@@ -66,6 +66,8 @@ void CommentedConfigFile::append( const Entry * entry )
 bool CommentedConfigFile::read( const string & filename )
 {
     this->filename = filename;
+
+    return true; // FIXME
 }
 
 
@@ -95,7 +97,7 @@ string_vec CommentedConfigFile::format_lines() const
 
 void CommentedConfigFile::clear_entries()
 {
-    for ( int i=0; i < entries.size() )
+    for ( size_t i=0; i < entries.size(); ++i )
         delete entries[i];
     entries.clear();
 }
