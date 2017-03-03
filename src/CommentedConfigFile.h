@@ -1,3 +1,10 @@
+/**
+ * CommentedConfigFile.h
+ *
+ * Author:  Stefan Hundhammer <Stefan.Hundhammer@gmx.de>
+ * License: GPL V2 - see file LICENSE for details
+ **/
+
 
 #ifndef CommentedConfigFile_h
 #define CommentedConfigFile_h
@@ -106,7 +113,8 @@ public:
          * Parse a content line. Return 'true' on success, 'false' on error.
          * Derived classes might choose to override this.
          **/
-        virtual bool parse( const string & line ) { content = line; return true; }
+        virtual bool parse( const string & line );
+            { content = line; return true; }
 
         //
         // Data members
@@ -121,18 +129,12 @@ public:
      * Constructor. If 'filename' is non-empty, this will parse the content of
      * the specified file.
      **/
-    CommentedConfigFile( const string & filename = "" ):
-        filename( filename ),
-        comment_marker( "#" )
-    {
-        if ( ! filename.empty() )
-            read( filename );
-    }
+    CommentedConfigFile( const string & filename = "" );
 
     /**
      * Destructor. This deletes all entries.
      **/
-    virtual ~CommentedConfigFile() { clear_entries(); }
+    virtual ~CommentedConfigFile();
 
 
     /**
@@ -181,41 +183,87 @@ public:
 
     Entry * operator[]( int i ) { return entries[i]; }
 
-    void clear_entries()
-    {
-        for ( int i=0; i < entries.size() )
-            delete entries[i];
-        entries.clear();
-    }
+    /**
+     * Clear and delete all entries. This leaves the header and footer comments
+     * intact.
+     **/
+    void clear_entries();
 
-    void clear_all()
-    {
-        clear_entries();
-        header_comments.clear();
-        footer_comments.clear();
-    }
+    /**
+     * Clear all: entries, header and footer comments.
+     **/
+    void clear_all();
 
-    void erase( int index ) { entries.erase( index ); }
-    void remove( int index ) { erase( index ); }
-    void insert( int before, const Entry * entry ) { entries.insert( before, entry ); }
-    void push_back( const Entry * entry ) { entries.push_back( entry ); }
-    void append( const Entry * entry ) { push_back( entry ); }
-    void operator<<( const Entry * entry ) { push_back( entry ); }
+    /**
+     * Return the index of 'entry' or -1 if there is no such entry.
+     **/
+    int index_of( const Entry * entry );
 
+    /**
+     * Remove the entry with the specified index from the entries and return it.
+     *
+     * The caller takes over ownership of the entry and has to delete it when
+     * appropriate.
+     **/
+    Entry * take( int index );
+
+    /**
+     * Remove the entry with the specified index from the entries and delete it.
+     **/
+    void remove( int index );
+
+    /**
+     * Insert 'entry' before index 'before'.
+     * This transfers ownership of the entry to this class.
+     **/
+    void insert( int before, const Entry * entry );
+
+    /**
+     * Append 'entry' at the end of the entries.
+     * This transfers ownership of the entry to this class.
+     **/
+    void append( const Entry * entry );
+
+    /**
+     * Alias for append().
+     **/
+    void operator<<( const Entry * entry ) { append( entry ); }
+    
+    /**
+     * Return the header comments (including empty lines).
+     **/
     string_vec & get_header_comments() { return header_comments; }
+
+    /**
+     * Return the footer comments (including empty lines).
+     **/
     string_vec & get_footer_comments() { return footer_comments; }
 
+    /**
+     * Get the last filename content was read from. This may be empty.
+     **/
     const string & get_filename() const { return filename; }
 
+    /**
+     * Return the comment marker (default: "#").
+     **/
     string get_comment_marker() const { return comment_marker; }
+
+    /**
+     * Set the comment marker for subsequent read() and parse() operations.
+     **/
     void set_comment_marker( const string & marker ) { comment_marker = marker; }
 
 protected:
 
     bool is_comment_line( const string & line );
     bool is_empty_line( const string & line );
-    void split_off_comment( const string & line, string & content_ret, string & comment_ret );
-    void strip_trailing_whitespace( const string & line );
+    
+    void split_off_comment( const string & line,
+                            string & content_ret,
+                            string & comment_ret );
+    
+    void strip_trailing_whitespace( string & line );
 
 private:
 
