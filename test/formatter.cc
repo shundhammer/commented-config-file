@@ -56,6 +56,19 @@ BOOST_AUTO_TEST_CASE( formatter_with_entry_comments )
 }
 
 
+string_vec read_lines( const string &filename )
+{
+    string_vec lines;
+    string line;
+    std::ifstream file( filename );
+
+    while ( std::getline( file, line ) )
+        lines.push_back( line );
+
+    return lines;
+}
+
+
 BOOST_AUTO_TEST_CASE( write_to_file )
 {
     string_vec input = test_data();
@@ -63,21 +76,12 @@ BOOST_AUTO_TEST_CASE( write_to_file )
     CommentedConfigFile subject;
     subject.parse( input );
 
-    string_vec output = subject.format_lines();
-
     string filename = "formatter-test.out";
     bool success = subject.write( filename );
 
     BOOST_CHECK_EQUAL( success, true );
 
-    output.clear();
-
-    std::ifstream file( filename );
-    string_vec lines;
-    string line;
-
-    while ( std::getline( file, line ) )
-        lines.push_back( line );
+    string_vec lines = read_lines( filename );
 
     BOOST_CHECK_EQUAL( input.size(), lines.size() );
 

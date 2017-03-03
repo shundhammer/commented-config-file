@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
                  << endl;
         }
 
-        cout << "  Entry #" << i+1 << " content: " << entry->content << endl;
+        cout << "  Entry #" << i+1 << " content  : " << entry->content << endl;
 
         if ( ! entry->line_comment.empty() )
             cout << "  Entry #" << i+1 << " line coment: " << entry->line_comment << endl;
