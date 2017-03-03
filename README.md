@@ -100,7 +100,7 @@ There is nothing to install: It's just C++ classes.
 You can add them to a library or to an application.
 
 
-## Installing boost headers
+## Installing Boost Headers
 
 Ubuntu:
 
