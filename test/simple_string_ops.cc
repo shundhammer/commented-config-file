@@ -86,12 +86,12 @@ void test_split( const string & line,
 
 BOOST_AUTO_TEST_CASE( split_line )
 {
-    test_split( "content # comment"    , "content", "# comment" );
-    test_split( "content   # comment  ", "content", "# comment" );
-    test_split( "content   #"          , "content", "#"         );
-    test_split( "content  "            , "content", ""          );
-    test_split( "    # comment\t"      , ""       , "# comment" );
-    test_split( ""                     , ""       , ""          );
+    test_split( "content # comment"    , "content", "# comment"   );
+    test_split( "content   # comment  ", "content", "# comment  " );
+    test_split( "content   #"          , "content", "#"           );
+    test_split( "content  "            , "content", ""            );
+    test_split( "    # comment\t"      , ""       , "# comment\t" );
+    test_split( ""                     , ""       , ""            );
 }
 
 

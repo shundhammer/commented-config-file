@@ -13,7 +13,6 @@
 
 #include "CommentedConfigFile.h"
 
-using std::ifstream;
 using std::cout;
 using std::endl;
 
@@ -90,7 +89,7 @@ bool CommentedConfigFile::read( const string & filename )
 
     string     line;
     string_vec lines;
-    ifstream   file( filename );
+    std::ifstream file( filename );
 
     while ( std::getline( file, line ) )
         lines.push_back( line );
@@ -105,7 +104,17 @@ bool CommentedConfigFile::write( const string & new_filename )
 {
     string name = new_filename.empty() ? this->filename : new_filename;
 
-    return true; // FIXME
+    std::ofstream file( name, std::ofstream::out | std::ofstream::trunc );
+
+    if ( ! file.is_open() )
+        return false;
+
+    string_vec lines = format_lines();
+
+    for ( size_t i=0; i < lines.size(); ++i )
+        file << lines[i] << "\n"; // no endl: Don't flush after every line
+
+    return true;
 }
 
 
@@ -192,6 +201,8 @@ int CommentedConfigFile::find_header_comment_end( const string_vec & lines )
 
     if ( last_empty_line > 0 )
     {
+        header_end = last_empty_line;
+
         // This covers two cases:
         //
         // - If there were empty lines and no more comment lines before the
@@ -201,8 +212,6 @@ int CommentedConfigFile::find_header_comment_end( const string_vec & lines )
         //   the first content line, the comments after the last empty line no
         //   longer belong to the header comment, but to the first content
         //   entry. So let's go back to that last empty line.
-
-        header_end = last_empty_line;
     }
 
     return header_end;
@@ -229,11 +238,25 @@ int CommentedConfigFile::find_footer_comment_start( const string_vec & lines, in
 
 string_vec CommentedConfigFile::format_lines() const
 {
-    string_vec lines;
+    string_vec lines = header_comments;
 
-    // TO DO
-    // TO DO
-    // TO DO
+    for ( size_t i=0; i < entries.size(); ++i )
+    {
+        Entry * entry = entries[i];
+
+        for ( size_t j=0; j < entry->comment_before.size(); ++j )
+            lines.push_back( entry->comment_before[j] );
+
+        string line = entry->format();
+
+        if ( ! entry->line_comment.empty() )
+            line += " " + entry->line_comment;
+
+        lines.push_back( line );
+    }
+
+    for ( size_t i=0; i < footer_comments.size(); ++i )
+        lines.push_back( footer_comments[i] );
 
     return lines;
 }
@@ -297,7 +320,6 @@ void CommentedConfigFile::split_off_comment( const string & line,
     }
 
     strip_trailing_whitespace( content_ret );
-    strip_trailing_whitespace( comment_ret );
 }
 
 

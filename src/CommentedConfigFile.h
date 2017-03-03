@@ -179,14 +179,24 @@ public:
      **/
     virtual Entry * create_entry() { return new Entry(); }
 
-    //
-    // Container operations
-    //
-
+    /**
+     * Return the number of entries.
+     **/
     int entry_count() const { return entries.size(); }
+
+    /**
+     * Return 'true' if there are no entries, 'false' if there are any.
+     **/
     bool empty() const { return entries.empty(); }
 
+    /**
+     * Return an interator that points to the first entry.
+     **/
     vector<Entry *>::const_iterator begin() const { return entries.begin(); }
+
+    /**
+     * Return an iterator that points one element after the last entry.
+     **/
     vector<Entry *>::const_iterator end()   const { return entries.end(); }
 
     /**
@@ -291,8 +301,8 @@ protected:
     /**
      * Split 'line' into a content and a comment part that are returned in
      * 'content_ret' and 'comment_ret', respectively. 'comment_ret' is either
-     * empty, or it starts with the comment marker. Both 'content_ret' and
-     * 'comment_ret' are stripped of trailing whitespace.
+     * empty, or it starts with the comment marker. 'content_ret' is stripped
+     * of trailing whitespace.
      **/
     void split_off_comment( const string & line,
 			    string & content_ret,

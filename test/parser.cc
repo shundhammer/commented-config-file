@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE( parser_with_entry_comments )
     BOOST_CHECK_EQUAL( subject.content(4), string( "entry 04 content" ) );
 
     BOOST_CHECK_EQUAL( subject.entry(0)->line_comment.empty(), true );
-    BOOST_CHECK_EQUAL( subject.entry(1)->line_comment, string( "# entry 01 line comment" ) );
+    BOOST_CHECK_EQUAL( subject.entry(1)->line_comment, string( "# entry 01 line comment  " ) );
     BOOST_CHECK_EQUAL( subject.entry(2)->line_comment.empty(), true );
 
     string_vec & comment = subject.entry(0)->comment_before;
