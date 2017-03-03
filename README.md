@@ -97,7 +97,7 @@ After that:
 
 ## Installing
 
-There is nothing to install: It's just C++ classes.  
+There is nothing to install: It's just C++ classes.
 You can add them to a library or to an application.
 
 
@@ -106,3 +106,56 @@ You can add them to a library or to an application.
 Ubuntu:
 
     sudo apt-get install libboost-all-dev
+
+
+## Sample Output
+
+The demo program in `src/main.cc` produces this output from my `/etc/fstab` file:
+
+    <Header>
+       1: # /etc/fstab: static file system information.
+       2: #
+       3: # [sh @ balrog] ~ %  sudo blkid | column -t
+       4: #
+       5: # /dev/sda1:  LABEL="Win-Boot"    UUID="C6CC71BDCC71A877"                      TYPE="ntfs"
+       6: # /dev/sda2:  LABEL="Win-App"     UUID="3E5E77515E770147"                      TYPE="ntfs"
+       7: #
+       8: # /dev/sdb1:  LABEL="swap"        UUID="be72e905-a417-41a4-a75f-12c0cf774f6a"  TYPE="swap"
+       9: # /dev/sdb2:  LABEL="openSUSE"    UUID="1d0bc24c-ae68-4c4e-82af-b3e184b2ac9d"  TYPE="ext4"
+      10: # /dev/sdb3:  LABEL="Ubuntu"      UUID="f5c15fbd-0417-4711-a0b7-f66b608bad0c"  TYPE="ext4"
+      11: # /dev/sdb5:  LABEL="work"        UUID="7e1d65c8-c6e3-4824-ac1c-c3a4ba90f54f"  TYPE="ext4"
+      12: #
+      13: #
+      14: # <file system>              <mount point>   <type> <options>         <dump>  <pass>
+      15:
+    </Header>
+
+    <Content>
+      Entry #1 content  : /dev/disk/by-label/swap      none             swap  sw                         0  0
+      Entry #2 content  : /dev/disk/by-label/openSUSE  /alternate-root  ext4  defaults                   0  2
+      Entry #3 content  : /dev/disk/by-label/Ubuntu    /                ext4  errors=remount-ro          0  1
+      Entry #4 content  : /dev/disk/by-label/work      /work            ext4  defaults                   0  2
+
+      Entry #5 comment 1:
+      Entry #5 comment 2: # Windows disk
+      Entry #5 content  : /dev/disk/by-label/Win-Boot  /win/boot        ntfs  defaults,umask=007,gid=46  0  0
+      Entry #6 content  : /dev/disk/by-label/Win-App   /win/app         ntfs  defaults,umask=007,gid=46  0  0
+    </Content>
+
+    <Footer>
+      1:
+      2:
+      3: # nas:/share/sh              /nas/sh          nfs   bg,intr,soft,retry=6       0  0
+      4: # nas:/share/work            /nas/work        nfs   bg,intr,soft,retry=6       0  0
+      5:
+    </Footer>
+
+I.e. it correctly detected the header comments, the footer comments and the
+comment that belongs to _Entry #5_. When the entries are rearranged, e.g. the
+entries for the Windows disk are moved above the Linux disk, that comment
+remains attached to that entry, i.e. it is moved together with that entry.
+
+Of course that has limitations. If a comment does not belong to the next entry,
+but to the previous one, it is moved to the wrong location. That's life. But
+it's much better than throwing away all comments every time a program touches a
+config file.
