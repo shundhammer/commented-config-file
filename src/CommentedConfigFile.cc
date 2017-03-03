@@ -170,11 +170,30 @@ void CommentedConfigFile::split_off_comment( const string & line,
 					     string & content_ret,
 					     string & comment_ret )
 {
+    size_t pos = line.find( comment_marker );
 
+    if ( pos == string::npos )
+    {
+        comment_ret = "";
+        content_ret = line;
+    }
+    else
+    {
+        content_ret = line.substr( 0, pos-1 );
+        comment_ret = line.substr( pos );
+    }
+
+    strip_trailing_whitespace( content_ret );
+    strip_trailing_whitespace( comment_ret );
 }
 
 
 void CommentedConfigFile::strip_trailing_whitespace( string & line )
 {
+    size_t pos = line.find_last_not_of( WHITESPACE );
 
+    if ( pos != string::npos )
+        line = line.substr( 0,  pos+1 );
+    else
+        line.clear();
 }

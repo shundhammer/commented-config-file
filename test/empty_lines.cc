@@ -9,7 +9,6 @@
 #include "CommentedConfigFile.h"
 
 
-
 BOOST_AUTO_TEST_CASE( empty_lines )
 {
     CommentedConfigFile subject;

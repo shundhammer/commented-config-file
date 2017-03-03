@@ -5,7 +5,9 @@ LDADD = ../src/CommentedConfigFile.o -lboost_unit_test_framework
 
 check_PROGRAMS =		\
 	empty_lines.test	\
-	comment_lines.test
+	comment_lines.test	\
+	strip.test		\
+	split_line.test
 
 AM_DEFAULT_SOURCE_EXT = .cc
 
