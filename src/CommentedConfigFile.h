@@ -189,6 +189,7 @@ public:
     vector<Entry *>::const_iterator begin() const { return entries.begin(); }
     vector<Entry *>::const_iterator end()   const { return entries.end(); }
 
+    Entry * entry( int i )      { return entries[i]; }
     Entry * operator[]( int i ) { return entries[i]; }
 
     /**
@@ -274,7 +275,8 @@ protected:
     bool is_comment_line( const string & line );
 
     /**
-     * Return 'true' if this is an empty line, i.e. there are no nonblank characters.
+     * Return 'true' if this is an empty line, i.e. there are no nonblank
+     * characters.
      **/
     bool is_empty_line( const string & line );
 
@@ -292,6 +294,25 @@ protected:
      * Strip all trailing whitespace from 'line'.
      **/
     void strip_trailing_whitespace( string & line );
+
+    /**
+     * Return the line number of the end of the header comment or -1 if there
+     * is none.
+     **/
+    int find_header_comment_end( const string_vec & lines );
+
+    /**
+     * Return the line number of the start of the footer comment (starting with
+     * line number 'from' or -1 if there is none.
+     **/
+    int find_footer_comment_start( const string_vec & lines, int from );
+
+    /**
+     * Parse entries from line no. 'from' to line no. 'end' in 'lines'.
+     * Return 'true' if success, 'false' if error.
+     **/
+    bool parse_entries( const string_vec & lines, int from, int end );
+
 
 private:
 

@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <boost/algorithm/string.hpp>
 
 #include "CommentedConfigFile.h"
@@ -72,8 +73,6 @@ void CommentedConfigFile::append( Entry * entry )
 
 bool CommentedConfigFile::read( const string & filename )
 {
-    clear_all();
-
     this->filename = filename;
 
     if ( filename.empty() )
@@ -102,16 +101,119 @@ bool CommentedConfigFile::write( const string & new_filename )
 
 bool CommentedConfigFile::parse( const string_vec & lines )
 {
-    for ( size_t i=0; i < lines.size(); ++i )
+    clear_all();
+
+    int header_end    = find_header_comment_end( lines );
+    int footer_start  = find_footer_comment_start( lines, header_end + 1 );
+    int content_start = 0;
+    int content_end   = lines.size() - 1;
+
+    if ( header_end > -1 )
+    {
+        for ( int i=0; i <= header_end; ++i )
+            header_comments.push_back( lines[i] );
+
+        content_start = header_end + 1;
+    }
+
+    if ( footer_start > -1 )
+    {
+        for ( size_t i = footer_start; i < lines.size(); ++i )
+            footer_comments.push_back( lines[i] );
+
+        content_end = footer_start - 1;
+    }
+
+    bool success = parse_entries( lines, content_start, content_end );
+
+    return success;
+}
+
+
+bool CommentedConfigFile::parse_entries( const string_vec & lines, int from, int end )
+{
+    string_vec comment_before;
+
+    for ( int i = from; i <= end; ++i )
     {
         const string & line = lines[i];
 
-        cout << ( is_comment_line( line ) ? "C" : "." );
-        cout << ( is_empty_line  ( line ) ? "E" : "." );
-        cout << "  " << i << ": " << line << endl;
+        if ( is_empty_line( line ) || is_comment_line( line ) )
+            comment_before.push_back( line );
+        else // found a content line
+        {
+            CommentedConfigFile::Entry * entry = create_entry();
+
+            if ( ! entry )
+                throw std::runtime_error( "CommentedConfigFile::create_entry() returned NULL" );
+
+            entry->comment_before = comment_before;
+            comment_before.clear();
+            string content;
+            split_off_comment( line, content, entry->line_comment );
+            append( entry );
+            bool success = entry->parse( content );
+
+            if ( ! success )
+                return false;
+        }
     }
 
     return true;
+}
+
+
+int CommentedConfigFile::find_header_comment_end( const string_vec & lines )
+{
+    int header_end      = -1;
+    int last_empty_line = -1;
+
+    for ( int i=0; i < (int) lines.size(); ++i )
+    {
+        const string & line = lines[i];
+
+        if ( is_empty_line( line ) )
+            last_empty_line = i;
+        else if ( is_comment_line( line ) )
+            header_end = i;
+        else // found the first content line
+            break;
+    }
+
+    if ( last_empty_line > 0 )
+    {
+        // This covers two cases:
+        //
+        // - If there were empty lines and no more comment lines before the
+        //   first content line, the empty lines belong to the header comment.
+        //
+        // - If there were empty lines and then some more comment lines before
+        //   the first content line, the comments after the last empty line no
+        //   longer belong to the header comment, but to the first content
+        //   entry. So let's go back to that last empty line.
+
+        header_end = last_empty_line;
+    }
+
+    return header_end;
+}
+
+
+int CommentedConfigFile::find_footer_comment_start( const string_vec & lines, int from )
+{
+    int footer_start = -1;
+
+    for ( int i = lines.size()-1; i >= from; --i )
+    {
+        const string & line = lines[i];
+
+        if ( is_empty_line( line ) || is_comment_line( line ) )
+            footer_start = i;
+        else // found the last content line
+            break;
+    }
+
+    return footer_start;
 }
 
 
@@ -131,6 +233,7 @@ void CommentedConfigFile::clear_entries()
 {
     for ( size_t i=0; i < entries.size(); ++i )
 	delete entries[i];
+
     entries.clear();
 }
 
