@@ -3,3 +3,4 @@ Makefile.in
 *.o
 .deps
 ccf_demo
+col_demo
