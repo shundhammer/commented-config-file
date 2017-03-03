@@ -10,6 +10,12 @@ License: GPL V2
 - STL
 - Boost
 
+- Autotools (just for demo program and test suite)
+
+This class should work on Linux/BSD/Unix-like systems and on all kinds of MS
+Windows. It's just a C++ class after all.
+
+
 ## Overview
 
 This is a utility class for C++ to read and write config files that might
@@ -31,32 +37,32 @@ can be set with setCommentMarker().
 
 (line numbers added for easier reference)
 
-    001    # Header comment 1
-    002    # Header comment 2
-    003    # Header comment 3
+    001	   # Header comment 1
+    002	   # Header comment 2
+    003	   # Header comment 3
     004
     005
-    006    # Header comment 4
-    007    # Header comment 5
+    006	   # Header comment 4
+    007	   # Header comment 5
     008
-    009    # Content line 1 comment 1
-    010    # Content line 1 comment 2
-    011    content line 1
-    012    content line 2
+    009	   # Content line 1 comment 1
+    010	   # Content line 1 comment 2
+    011	   content line 1
+    012	   content line 2
     013
-    014    content line 3
+    014	   content line 3
     015
-    016    content line 4
-    017    content line 5 # Line comment 5
-    018    # Content line 6 comment 1
+    016	   content line 4
+    017	   content line 5 # Line comment 5
+    018	   # Content line 6 comment 1
     019
-    020    content line 6 # Line comment 6
-    021    content line 7
+    020	   content line 6 # Line comment 6
+    021	   content line 7
     022
-    023    # Footer comment 1
-    024    # Footer comment 2
+    023	   # Footer comment 1
+    024	   # Footer comment 2
     025
-    026    # Footer comment 3
+    026	   # Footer comment 3
 
 
 Empty lines or lines that have only whitespace belong to the next comment
@@ -76,3 +82,20 @@ content line. In this example, the header comment consists of lines
 
 Applications using this class can largely just ignore all the comment stuff;
 the class will handle the comments automagically.
+
+
+## Building
+
+Once:
+
+    ./build-all
+
+After that:
+
+    make
+
+
+## Installing
+
+There is nothing to install: It's just C++ classes.  
+You can add them to a library or to an application.
