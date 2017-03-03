@@ -95,46 +95,49 @@ public:
     class Entry
     {
     public:
-        /**
-         * Constructor. Not accepting a 'line' argument because that would need
-         * to be parsed, and that would require calling the overloaded virtual
-         * parse() function which is not possible in the constructor.
-         **/
-        Entry() {}
+	/**
+	 * Constructor. Not accepting a 'line' argument because that would need
+	 * to be parsed, and that would require calling the overloaded virtual
+	 * parse() function which is not possible in the constructor.
+	 **/
+	Entry() {}
 
-        /**
-         *
-         **/
-        virtual ~Entry() {}
+	/**
+	 *
+	 **/
+	virtual ~Entry() {}
 
-        /**
-         * Format the content as a string.
-         * Derived classes might choose to override this.
-         * Do not add 'line_comment'; it is added automatically.
-         **/
-        virtual string format() { return content; }
+	/**
+	 * Format the content as a string.
+	 * Derived classes might choose to override this.
+	 * Do not add 'line_comment'; it is added automatically.
+	 **/
+	virtual string format() { return content; }
 
-        /**
-         * Parse a content line. Return 'true' on success, 'false' on error.
-         * Derived classes might choose to override this.
-         **/
-        virtual bool parse( const string & line )
-            { content = line; return true; }
+	/**
+	 * Parse a content line. Return 'true' on success, 'false' on error.
+	 * Derived classes might choose to override this.
+	 **/
+	virtual bool parse( const string & line )
+	    { content = line; return true; }
 
-        //
-        // Data members
-        //
+	//
+	// Data members
+	//
 
-        string_vec comment_before;
-        string     line_comment;   // at the end of the line
-        string     content;
+	string_vec comment_before;
+	string	   line_comment;   // at the end of the line
+	string	   content;
     };
 
     /**
-     * Constructor. If 'filename' is non-empty, this will parse the content of
-     * the specified file.
+     * Constructor.
+     *
+     * This intentionally does not accept a filename to start reading a file
+     * right away because that would call virtual methods indirectly that
+     * cannot be called in the constructor.
      **/
-    CommentedConfigFile( const string & filename = "" );
+    CommentedConfigFile();
 
     /**
      * Destructor. This deletes all entries.
@@ -205,10 +208,13 @@ public:
     int index_of( const Entry * entry );
 
     /**
-     * Remove the entry with the specified index from the entries and return it.
+     * Take the entry with the specified index out of the entries and return
+     * it. This is useful when rearranging the order of entries: Take it out
+     * and insert it at another place
      *
      * The caller takes over ownership of the entry and has to delete it when
-     * appropriate.
+     * appropriate (except of course when it is re-inserted into the entries at
+     * a later time, in which case this class will take over ownership again).
      **/
     Entry * take( int index );
 
@@ -233,7 +239,7 @@ public:
      * Alias for append().
      **/
     void operator<<( Entry * entry ) { append( entry ); }
-    
+
     /**
      * Return the header comments (including empty lines).
      **/
@@ -261,23 +267,40 @@ public:
 
 protected:
 
+    /**
+     * Return 'true' if this is a comment line (not an empty line!), i.e. the
+     * first nonblank character is the comment marker ("#" by default).
+     **/
     bool is_comment_line( const string & line );
+
+    /**
+     * Return 'true' if this is an empty line, i.e. there are no nonblank characters.
+     **/
     bool is_empty_line( const string & line );
-    
+
+    /**
+     * Split 'line' into a content and a comment part that are returned in
+     * 'content_ret' and 'comment_ret', respectively. 'comment_ret' is either
+     * empty, or it starts with the comment marker. Both 'content_ret' and
+     * 'comment_ret' are stripped of trailing whitespace.
+     **/
     void split_off_comment( const string & line,
-                            string & content_ret,
-                            string & comment_ret );
-    
+			    string & content_ret,
+			    string & comment_ret );
+
+    /**
+     * Strip all trailing whitespace from 'line'.
+     **/
     void strip_trailing_whitespace( string & line );
 
 private:
 
-    string          filename;
-    string          comment_marker;
+    string	    filename;
+    string	    comment_marker;
 
-    string_vec      header_comments;
+    string_vec	    header_comments;
     vector<Entry *> entries;
-    string_vec      footer_comments;
+    string_vec	    footer_comments;
 
 };
 
