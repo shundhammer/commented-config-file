@@ -122,7 +122,7 @@ To run just one single test (to get more output if it failed):
 
 ## Sample Output
 
-The demo program in `src/main.cc` produces this output from my `/etc/fstab` file:
+The `ccf_demo` program in `src/main.cc` produces this output from my `/etc/fstab` file:
 
     <Header>
        1: # /etc/fstab: static file system information.
