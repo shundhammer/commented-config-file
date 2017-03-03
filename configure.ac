@@ -16,4 +16,5 @@ AC_PROG_CXX
 AC_OUTPUT(
     Makefile
     src/Makefile
+    test/Makefile
     )

@@ -1,7 +1,6 @@
 # Toplevel Makefile.am
 
-
-SUBDIRS = src # test
+SUBDIRS = src test
 
 AUTOMAKE_OPTIONS = foreign dist-bzip2 no-dist-gzip
 
