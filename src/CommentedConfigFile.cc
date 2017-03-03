@@ -55,7 +55,8 @@ CommentedConfigFile::Entry * CommentedConfigFile::take( int index )
 
 void CommentedConfigFile::remove( int index )
 {
-    delete take( index );
+    Entry * entry = take( index );
+    delete entry;
 }
 
 
