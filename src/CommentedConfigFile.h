@@ -183,14 +183,22 @@ public:
     // Container operations
     //
 
-    int size() const { return entries.size(); }
+    int entry_count() const { return entries.size(); }
     bool empty() const { return entries.empty(); }
 
     vector<Entry *>::const_iterator begin() const { return entries.begin(); }
     vector<Entry *>::const_iterator end()   const { return entries.end(); }
 
-    Entry * entry( int i )      { return entries[i]; }
-    Entry * operator[]( int i ) { return entries[i]; }
+    /**
+     * Return entry no. 'index' or 0 if 'index' is out of range.
+     **/
+    Entry * entry( int index );
+
+    /**
+     * Convenience method because it is probably the most used:
+     * Return the content of entry no. 'index'.
+     **/
+    string content( int index )    { return entry( index )->content; }
 
     /**
      * Clear and delete all entries. This leaves the header and footer comments

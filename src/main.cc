@@ -37,7 +37,7 @@ int main( int argc, char *argv[] )
     cout << "</Header>" << endl;
     cout << "\n<Content>" << endl;
 
-    for ( int i=0; i < file.size(); ++i )
+    for ( int i=0; i < file.entry_count(); ++i )
     {
         CommentedConfigFile::Entry * entry = file.entry( i );
 

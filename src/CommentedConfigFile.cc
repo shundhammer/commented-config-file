@@ -32,6 +32,15 @@ CommentedConfigFile::~CommentedConfigFile()
 }
 
 
+CommentedConfigFile::Entry * CommentedConfigFile::entry( int index )
+{
+    if ( index < 0 || index >= (int) entries.size() )
+        return 0;
+    else
+        return entries[ index ];
+}
+
+
 int CommentedConfigFile::index_of( const Entry * wanted_entry )
 {
     for ( size_t i=0; i < entries.size(); ++i )
