@@ -32,8 +32,8 @@ BOOST_AUTO_TEST_CASE( parser_simple )
 BOOST_AUTO_TEST_CASE( parser_with_header )
 {
     string_vec input = {
-        /** 00 **/  "# header 01",
-        /** 01 **/  "# header 02",
+        /** 00 **/  "# header 00",
+        /** 01 **/  "# header 01",
         /** 02 **/  "",
         /** 03 **/  "aaa bbb ccc",
         /** 04 **/  "ddd eee fff",
@@ -65,15 +65,15 @@ BOOST_AUTO_TEST_CASE( parser_with_header )
 BOOST_AUTO_TEST_CASE( parser_with_header_and_footer )
 {
     string_vec input = {
-        /** 00 **/  "# header 01",
-        /** 01 **/  "# header 02",
+        /** 00 **/  "# header 00",
+        /** 01 **/  "# header 01",
         /** 02 **/  "",
         /** 03 **/  "aaa bbb ccc",
         /** 04 **/  "ddd eee fff",
         /** 05 **/  "ggg hhh iii",
         /** 06 **/  "",
-        /** 07 **/  "# footer 01",
-        /** 08 **/  "# footer 02",
+        /** 07 **/  "# footer 00",
+        /** 08 **/  "# footer 01",
         /** 09 **/  ""
     };
 
@@ -109,26 +109,26 @@ BOOST_AUTO_TEST_CASE( parser_with_header_and_footer )
 BOOST_AUTO_TEST_CASE( parser_with_entry_comments )
 {
     string_vec input = {
-        /** 00 **/  "# header 01",
-        /** 01 **/  "# header 02",
+        /** 00 **/  "# header 00",
+        /** 01 **/  "# header 01",
         /** 02 **/  "",
-        /** 03 **/  "# header 03",
+        /** 03 **/  "# header 02",
         /** 04 **/  "",
-        /** 05 **/  "# entry 00 comment 01",
-        /** 06 **/  "# entry 00 comment 02",
+        /** 05 **/  "# entry 00 comment 00",
+        /** 06 **/  "# entry 00 comment 01",
         /** 07 **/  "entry 00 content",
-        /** 08 **/  "# entry 01 comment 02",
+        /** 08 **/  "# entry 01 comment 00",
         /** 09 **/  "entry 01 content    # entry 01 line comment  ",
         /** 10 **/  "",
-        /** 11 **/  "# entry 02 comment 01",
-        /** 12 **/  "# entry 02 comment 02   ",
-        /** 13 **/  "# entry 02 comment 03",
+        /** 11 **/  "# entry 02 comment 00",
+        /** 12 **/  "# entry 02 comment 01   ",
+        /** 13 **/  "# entry 02 comment 02",
         /** 14 **/  "entry 02 content",
         /** 15 **/  "entry 03 content\t",
         /** 16 **/  "entry 04 content",
         /** 17 **/  "",
-        /** 18 **/  "# footer 01",
-        /** 19 **/  "# footer 02"
+        /** 18 **/  "# footer 00",
+        /** 19 **/  "# footer 01"
     };
 
     CommentedConfigFile subject;
