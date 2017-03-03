@@ -4,15 +4,17 @@
 
 #include <boost/test/unit_test.hpp>
 #include <iostream>
+#include <fstream>
+#include <stdio.h>
 
 #define protected public
 #define private   public
 #include "CommentedConfigFile.h"
 
 
-BOOST_AUTO_TEST_CASE( formatter_with_entry_comments )
+string_vec test_data()
 {
-    string_vec input = {
+    string_vec lines = {
         "# header 00",
         "# header 01",
         "",
@@ -35,13 +37,56 @@ BOOST_AUTO_TEST_CASE( formatter_with_entry_comments )
         "# footer 01"
     };
 
+    return lines;
+}
+
+
+BOOST_AUTO_TEST_CASE( formatter_with_entry_comments )
+{
+    string_vec input = test_data();
+
     CommentedConfigFile subject;
     subject.parse( input );
     string_vec output = subject.format_lines();
 
     BOOST_CHECK_EQUAL( input.size(), output.size() );
-    
+
     for ( size_t i=0; i < input.size(); ++i )
         BOOST_CHECK_EQUAL( input[i], output[i] );
+}
+
+
+BOOST_AUTO_TEST_CASE( write_to_file )
+{
+    string_vec input = test_data();
+
+    CommentedConfigFile subject;
+    subject.parse( input );
+
+    string_vec output = subject.format_lines();
+
+    string filename = "formatter-test.out";
+    bool success = subject.write( filename );
+
+    BOOST_CHECK_EQUAL( success, true );
+
+    output.clear();
+
+    std::ifstream file( filename );
+    string_vec lines;
+    string line;
+
+    while ( std::getline( file, line ) )
+        lines.push_back( line );
+
+    BOOST_CHECK_EQUAL( input.size(), lines.size() );
+
+    for ( size_t i=0; i < input.size(); ++i )
+        BOOST_CHECK_EQUAL( input[i], lines[i] );
+
+    remove( filename.c_str() );
+
+    success = subject.write( "/wrglbrmpf/doesntexist/x.out" );
+    BOOST_CHECK_EQUAL( success, false );
 }
 
