@@ -5,6 +5,7 @@ LDADD = ../src/CommentedConfigFile.o -lboost_unit_test_framework
 
 check_PROGRAMS =		\
 	simple_string_ops.test	\
+	container_ops.test	\
 	parser.test		\
 	formatter.test
 

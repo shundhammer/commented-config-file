@@ -255,9 +255,13 @@ public:
     void append( Entry * entry );
 
     /**
-     * Alias for append().
+     * Very much like append(), but it returns a reference to this instance so
+     * the operators can be chained:
+     *
+     *     etcFstab << entry_a << entry_b << entry_c;
      **/
-    void operator<<( Entry * entry ) { append( entry ); }
+    CommentedConfigFile & operator<<( Entry * entry )
+        { append( entry ); return *this; }
 
     /**
      * Return the header comments (including empty lines).

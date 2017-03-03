@@ -54,6 +54,9 @@ int CommentedConfigFile::index_of( const Entry * wanted_entry )
 
 CommentedConfigFile::Entry * CommentedConfigFile::take( int index )
 {
+    if ( index < 0 || index >= (int) entries.size() )
+        return 0;
+
     Entry * entry = entries[ index ];
     entries.erase( entries.begin() + index );
 
@@ -64,7 +67,9 @@ CommentedConfigFile::Entry * CommentedConfigFile::take( int index )
 void CommentedConfigFile::remove( int index )
 {
     Entry * entry = take( index );
-    delete entry;
+
+    if ( entry )
+        delete entry;
 }
 
 
