@@ -37,9 +37,9 @@ int main( int argc, char *argv[] )
     cout << "</Header>" << endl;
     cout << "\n<Content>" << endl;
 
-    for ( int i=0; i < file.entry_count(); ++i )
+    for ( int i=0; i < file.get_entry_count(); ++i )
     {
-        CommentedConfigFile::Entry * entry = file.entry( i );
+        CommentedConfigFile::Entry * entry = file.get_entry( i );
 
         if ( ! entry->comment_before.empty() )
             cout << endl;

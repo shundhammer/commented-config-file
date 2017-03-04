@@ -31,7 +31,7 @@ CommentedConfigFile::~CommentedConfigFile()
 }
 
 
-CommentedConfigFile::Entry * CommentedConfigFile::entry( int index )
+CommentedConfigFile::Entry * CommentedConfigFile::get_entry( int index )
 {
     if ( index < 0 || index >= (int) entries.size() )
         return 0;
@@ -40,7 +40,7 @@ CommentedConfigFile::Entry * CommentedConfigFile::entry( int index )
 }
 
 
-int CommentedConfigFile::index_of( const Entry * wanted_entry )
+int CommentedConfigFile::get_index_of( const Entry * wanted_entry )
 {
     for ( size_t i=0; i < entries.size(); ++i )
     {
@@ -59,6 +59,7 @@ CommentedConfigFile::Entry * CommentedConfigFile::take( int index )
 
     Entry * entry = entries[ index ];
     entries.erase( entries.begin() + index );
+    entry->parent = 0;
 
     return entry;
 }
@@ -76,12 +77,14 @@ void CommentedConfigFile::remove( int index )
 void CommentedConfigFile::insert( int before, Entry * entry )
 {
     entries.insert( entries.begin() + before, entry );
+    entry->parent = this;
 }
 
 
 void CommentedConfigFile::append( Entry * entry )
 {
     entries.push_back( entry );
+    entry->parent = this;
 }
 
 
@@ -154,7 +157,9 @@ bool CommentedConfigFile::parse( const string_vec & lines )
 }
 
 
-bool CommentedConfigFile::parse_entries( const string_vec & lines, int from, int end )
+bool CommentedConfigFile::parse_entries( const string_vec & lines,
+                                         int from,
+                                         int end )
 {
     string_vec comment_before;
 
@@ -223,7 +228,8 @@ int CommentedConfigFile::find_header_comment_end( const string_vec & lines )
 }
 
 
-int CommentedConfigFile::find_footer_comment_start( const string_vec & lines, int from )
+int CommentedConfigFile::find_footer_comment_start( const string_vec & lines,
+                                                    int from )
 {
     int footer_start = -1;
 
@@ -241,7 +247,7 @@ int CommentedConfigFile::find_footer_comment_start( const string_vec & lines, in
 }
 
 
-string_vec CommentedConfigFile::format_lines() const
+string_vec CommentedConfigFile::format_lines()
 {
     string_vec lines = header_comments;
 

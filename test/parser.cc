@@ -22,10 +22,10 @@ BOOST_AUTO_TEST_CASE( parser_simple )
 
     BOOST_CHECK_EQUAL( subject.get_header_comments().empty(), true );
     BOOST_CHECK_EQUAL( subject.get_footer_comments().empty(), true );
-    BOOST_CHECK_EQUAL( subject.entry_count(), 3 );
-    BOOST_CHECK_EQUAL( subject.content(0), input[0] );
-    BOOST_CHECK_EQUAL( subject.content(1), input[1] );
-    BOOST_CHECK_EQUAL( subject.content(2), input[2] );
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 3 );
+    BOOST_CHECK_EQUAL( subject.get_content(0), input[0] );
+    BOOST_CHECK_EQUAL( subject.get_content(1), input[1] );
+    BOOST_CHECK_EQUAL( subject.get_content(2), input[2] );
 }
 
 
@@ -55,10 +55,10 @@ BOOST_AUTO_TEST_CASE( parser_with_header )
 
     int content_start = 3;
 
-    BOOST_CHECK_EQUAL( subject.entry_count(), 3 );
-    BOOST_CHECK_EQUAL( subject.content(0), input[ content_start     ] );
-    BOOST_CHECK_EQUAL( subject.content(1), input[ content_start + 1 ] );
-    BOOST_CHECK_EQUAL( subject.content(2), input[ content_start + 2 ] );
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 3 );
+    BOOST_CHECK_EQUAL( subject.get_content(0), input[ content_start     ] );
+    BOOST_CHECK_EQUAL( subject.get_content(1), input[ content_start + 1 ] );
+    BOOST_CHECK_EQUAL( subject.get_content(2), input[ content_start + 2 ] );
 }
 
 
@@ -99,10 +99,10 @@ BOOST_AUTO_TEST_CASE( parser_with_header_and_footer )
 
     int content_start = 3;
 
-    BOOST_CHECK_EQUAL( subject.entry_count(), 3 );
-    BOOST_CHECK_EQUAL( subject.content(0), input[ content_start     ] );
-    BOOST_CHECK_EQUAL( subject.content(1), input[ content_start + 1 ] );
-    BOOST_CHECK_EQUAL( subject.content(2), input[ content_start + 2 ] );
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 3 );
+    BOOST_CHECK_EQUAL( subject.get_content(0), input[ content_start     ] );
+    BOOST_CHECK_EQUAL( subject.get_content(1), input[ content_start + 1 ] );
+    BOOST_CHECK_EQUAL( subject.get_content(2), input[ content_start + 2 ] );
 }
 
 
@@ -151,27 +151,27 @@ BOOST_AUTO_TEST_CASE( parser_with_entry_comments )
     BOOST_CHECK_EQUAL( footer[1], input[ footer_start+1 ] );
     BOOST_CHECK_EQUAL( footer[2], input[ footer_start+2 ] );
 
-    BOOST_CHECK_EQUAL( subject.entry_count(), 5 );
-    BOOST_CHECK_EQUAL( subject.content(0), input[ 7 ] );
-    BOOST_CHECK_EQUAL( subject.content(1), string( "entry 01 content" ) );
-    BOOST_CHECK_EQUAL( subject.content(2), string( "entry 02 content" ) );
-    BOOST_CHECK_EQUAL( subject.content(3), string( "entry 03 content" ) );
-    BOOST_CHECK_EQUAL( subject.content(4), string( "entry 04 content" ) );
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 5 );
+    BOOST_CHECK_EQUAL( subject.get_content(0), input[ 7 ] );
+    BOOST_CHECK_EQUAL( subject.get_content(1), string( "entry 01 content" ) );
+    BOOST_CHECK_EQUAL( subject.get_content(2), string( "entry 02 content" ) );
+    BOOST_CHECK_EQUAL( subject.get_content(3), string( "entry 03 content" ) );
+    BOOST_CHECK_EQUAL( subject.get_content(4), string( "entry 04 content" ) );
 
-    BOOST_CHECK_EQUAL( subject.entry(0)->line_comment.empty(), true );
-    BOOST_CHECK_EQUAL( subject.entry(1)->line_comment, string( "# entry 01 line comment  " ) );
-    BOOST_CHECK_EQUAL( subject.entry(2)->line_comment.empty(), true );
+    BOOST_CHECK_EQUAL( subject.get_entry(0)->line_comment.empty(), true );
+    BOOST_CHECK_EQUAL( subject.get_entry(1)->line_comment, string( "# entry 01 line comment  " ) );
+    BOOST_CHECK_EQUAL( subject.get_entry(2)->line_comment.empty(), true );
 
-    string_vec & comment = subject.entry(0)->comment_before;
+    string_vec & comment = subject.get_entry(0)->comment_before;
     BOOST_CHECK_EQUAL( comment.size(), 2 );
     BOOST_CHECK_EQUAL( comment[0], input[ 5 ] );
     BOOST_CHECK_EQUAL( comment[1], input[ 6 ] );
 
-    comment = subject.entry(1)->comment_before;
+    comment = subject.get_entry(1)->comment_before;
     BOOST_CHECK_EQUAL( comment.size(), 1 );
     BOOST_CHECK_EQUAL( comment[0], input[ 8 ] );
 
-    comment = subject.entry(2)->comment_before;
+    comment = subject.get_entry(2)->comment_before;
     BOOST_CHECK_EQUAL( comment.size(), 4 );
     BOOST_CHECK_EQUAL( comment[0], input[ 10 ] );
     BOOST_CHECK_EQUAL( comment[1], input[ 11 ] );

@@ -31,46 +31,55 @@ BOOST_AUTO_TEST_CASE( container_operations )
 
     BOOST_CHECK_EQUAL( subject.empty(), true );
 
+    BOOST_CHECK_EQUAL( entry_a->parent, (void *) 0);
+    BOOST_CHECK_EQUAL( entry_c->parent, (void *) 0);
+
     subject << entry_b << entry_d << entry_e;
 
-    BOOST_CHECK_EQUAL( subject.entry_count(), 3 );
-    BOOST_CHECK_EQUAL( subject.entry(0), entry_b );
-    BOOST_CHECK_EQUAL( subject.entry(1), entry_d );
-    BOOST_CHECK_EQUAL( subject.entry(2), entry_e );
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 3 );
+    BOOST_CHECK_EQUAL( subject.get_entry(0), entry_b );
+    BOOST_CHECK_EQUAL( subject.get_entry(1), entry_d );
+    BOOST_CHECK_EQUAL( subject.get_entry(2), entry_e );
+
+    BOOST_CHECK_EQUAL( entry_d->parent, &subject );
+    BOOST_CHECK_EQUAL( entry_e->parent, &subject );
 
     subject.insert( 1, entry_c );
-    
-    BOOST_CHECK_EQUAL( subject.entry_count(), 4 );
-    BOOST_CHECK_EQUAL( subject.entry(0), entry_b );
-    BOOST_CHECK_EQUAL( subject.entry(1), entry_c );
-    BOOST_CHECK_EQUAL( subject.entry(2), entry_d );
-    BOOST_CHECK_EQUAL( subject.entry(3), entry_e );
-    
+
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 4 );
+    BOOST_CHECK_EQUAL( subject.get_entry(0), entry_b );
+    BOOST_CHECK_EQUAL( subject.get_entry(1), entry_c );
+    BOOST_CHECK_EQUAL( subject.get_entry(2), entry_d );
+    BOOST_CHECK_EQUAL( subject.get_entry(3), entry_e );
+
+    BOOST_CHECK_EQUAL( entry_c->parent, &subject );
+
     subject.insert( 0, entry_a );
-    
-    BOOST_CHECK_EQUAL( subject.entry_count(), 5 );
-    BOOST_CHECK_EQUAL( subject.entry(0), entry_a );
-    BOOST_CHECK_EQUAL( subject.entry(1), entry_b );
-    BOOST_CHECK_EQUAL( subject.entry(2), entry_c );
-    BOOST_CHECK_EQUAL( subject.entry(3), entry_d );
-    BOOST_CHECK_EQUAL( subject.entry(4), entry_e );
+
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 5 );
+    BOOST_CHECK_EQUAL( subject.get_entry(0), entry_a );
+    BOOST_CHECK_EQUAL( subject.get_entry(1), entry_b );
+    BOOST_CHECK_EQUAL( subject.get_entry(2), entry_c );
+    BOOST_CHECK_EQUAL( subject.get_entry(3), entry_d );
+    BOOST_CHECK_EQUAL( subject.get_entry(4), entry_e );
 
     entry = subject.take( 3 );
-    
-    BOOST_CHECK_EQUAL( entry, entry_d );
-    
-    BOOST_CHECK_EQUAL( subject.entry_count(), 4 );
-    BOOST_CHECK_EQUAL( subject.entry(0), entry_a );
-    BOOST_CHECK_EQUAL( subject.entry(1), entry_b );
-    BOOST_CHECK_EQUAL( subject.entry(2), entry_c );
-    BOOST_CHECK_EQUAL( subject.entry(3), entry_e );
 
-    BOOST_CHECK_EQUAL( subject.index_of( entry_c),  2 );
-    BOOST_CHECK_EQUAL( subject.index_of( entry_d), -1 );
+    BOOST_CHECK_EQUAL( entry, entry_d );
+    BOOST_CHECK_EQUAL( entry_d->parent, (void *) 0);
+
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 4 );
+    BOOST_CHECK_EQUAL( subject.get_entry(0), entry_a );
+    BOOST_CHECK_EQUAL( subject.get_entry(1), entry_b );
+    BOOST_CHECK_EQUAL( subject.get_entry(2), entry_c );
+    BOOST_CHECK_EQUAL( subject.get_entry(3), entry_e );
+
+    BOOST_CHECK_EQUAL( subject.get_index_of( entry_c),  2 );
+    BOOST_CHECK_EQUAL( subject.get_index_of( entry_d), -1 );
     BOOST_CHECK_EQUAL( subject.take(9), (void *) 0 );
 
     subject.clear_entries();
-    
+
     BOOST_CHECK_EQUAL( subject.empty(), true );
-    BOOST_CHECK_EQUAL( subject.entry_count(), 0 );
+    BOOST_CHECK_EQUAL( subject.get_entry_count(), 0 );
 }

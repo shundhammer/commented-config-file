@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/noncopyable.hpp>
 
 using std::string;
 using std::vector;
@@ -82,7 +83,7 @@ typedef vector<string> string_vec;
  * Applications using this class can largely just ignore all the comment stuff;
  * the class will handle the comments automagically.
  **/
-class CommentedConfigFile
+class CommentedConfigFile: private boost::noncopyable
 {
 public:
 
@@ -100,7 +101,9 @@ public:
 	 * to be parsed, and that would require calling the overloaded virtual
 	 * parse() function which is not possible in the constructor.
 	 **/
-	Entry() {}
+	Entry():
+	    parent(0)
+	    {}
 
 	/**
 	 *
@@ -128,6 +131,11 @@ public:
 	string_vec comment_before;
 	string	   line_comment;   // at the end of the line
 	string	   content;
+
+	// Parent CommentConfigFile. This is set when this entry is added to
+	// the CommentConfigFile's entries, and it is set to 0 when it is
+	// removed from there (take(), remove()).
+	CommentedConfigFile * parent;
     };
 
 
@@ -171,8 +179,11 @@ public:
     /**
      * Format the entire file as string lines, including header, footer and all
      * other comments.
+     *
+     * This is intentionally non-const so derived classes can update any
+     * formatting information in an overwritten version of this function
      **/
-    string_vec format_lines() const;
+    virtual string_vec format_lines();
 
     /**
      * Factory method to create one entry.
@@ -186,7 +197,7 @@ public:
     /**
      * Return the number of entries.
      **/
-    int entry_count() const { return entries.size(); }
+    int get_entry_count() const { return entries.size(); }
 
     /**
      * Return 'true' if there are no entries, 'false' if there are any.
@@ -206,13 +217,13 @@ public:
     /**
      * Return entry no. 'index' or 0 if 'index' is out of range.
      **/
-    Entry * entry( int index );
+    Entry * get_entry( int index );
 
     /**
      * Convenience method because it is probably the most used:
      * Return the content of entry no. 'index'.
      **/
-    string content( int index )    { return entry( index )->content; }
+    string get_content( int index ) { return get_entry( index )->content; }
 
     /**
      * Clear and delete all entries. This leaves the header and footer comments
@@ -228,7 +239,7 @@ public:
     /**
      * Return the index of 'entry' or -1 if there is no such entry.
      **/
-    int index_of( const Entry * entry );
+    int get_index_of( const Entry * entry );
 
     /**
      * Take the entry with the specified index out of the entries and return
@@ -262,10 +273,10 @@ public:
      * Very much like append(), but it returns a reference to this instance so
      * the operators can be chained:
      *
-     *     etcFstab << entry_a << entry_b << entry_c;
+     *	   etcFstab << entry_a << entry_b << entry_c;
      **/
     CommentedConfigFile & operator<<( Entry * entry )
-        { append( entry ); return *this; }
+	{ append( entry ); return *this; }
 
     /**
      * Return the header comments (including empty lines).

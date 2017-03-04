@@ -37,10 +37,10 @@ int main( int argc, char *argv[] )
     cout << "</Header>" << endl;
     cout << "\n<Content>" << endl;
 
-    for ( int i=0; i < file.entry_count(); ++i )
+    for ( int i=0; i < file.get_entry_count(); ++i )
     {
         ColumnConfigFile::Entry * entry =
-            dynamic_cast<ColumnConfigFile::Entry *>( file.entry( i ) );
+            dynamic_cast<ColumnConfigFile::Entry *>( file.get_entry( i ) );
 
         if ( ! entry )
         {
@@ -61,11 +61,11 @@ int main( int argc, char *argv[] )
         if ( ! entry->comment_before.empty() )
             cout << "    -----" << endl;
 
-        for ( int col = 0; col < entry->column_count(); ++col )
+        for ( int col = 0; col < entry->get_column_count(); ++col )
         {
             cout << "    Entry #" << i+1
                  << " col #" << col << ": "
-                 << entry->column( col )
+                 << entry->get_column( col )
                  << endl;
         }
 
