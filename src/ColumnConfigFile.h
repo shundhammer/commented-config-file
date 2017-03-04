@@ -103,6 +103,20 @@ public:
     virtual string_vec format_lines();
 
     /**
+     * Return 'true' if columns should be padded upon output, i.e. they should
+     * get the same widths so they neatly line up. The default is 'true'.
+     *
+     * Padding is limited by maximum column widths which can be set globally or
+     * per column with set_max_column_width().
+     **/
+    bool get_pad_columns() const { return pad_columns; }
+
+    /**
+     * Enable or disable column padding.
+     **/
+    void set_pad_columns( bool do_pad ) { pad_columns = do_pad; }
+
+    /**
      * Return the best column width for a column. If a maximum width for this
      * column is set, this returns no more than the maximum width.
      **/
@@ -130,6 +144,7 @@ protected:
     vector<int> column_widths;
     vector<int> max_column_widths;
     int         max_column_width;
+    bool        pad_columns;
 };
 
 #endif // ColumnConfigFile_h

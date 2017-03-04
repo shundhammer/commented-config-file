@@ -31,7 +31,7 @@ string ColumnConfigFile::Entry::format()
         {
             ColumnConfigFile * col_parent = dynamic_cast<ColumnConfigFile *>( parent );
 
-            if ( col_parent )
+            if ( col_parent && col_parent->get_pad_columns() )
             {
                 size_t field_width = col_parent->get_column_width( i );
 
@@ -73,7 +73,8 @@ string_vec ColumnConfigFile::Entry::split( const string & line ) const
 
 ColumnConfigFile::ColumnConfigFile():
     CommentedConfigFile(),
-    max_column_width( DEFAULT_MAX_COLUMN_WIDTH )
+    max_column_width( DEFAULT_MAX_COLUMN_WIDTH ),
+    pad_columns( true )
 {
 
 }
@@ -125,6 +126,11 @@ void ColumnConfigFile::set_max_column_width( int column, int new_size )
 
 void ColumnConfigFile::calc_column_widths()
 {
+    column_widths.clear();
+
+    if ( ! pad_columns )
+        return;
+
     int columns = 0;
 
     for ( int i=0; i < get_entry_count(); ++i )
@@ -136,7 +142,6 @@ void ColumnConfigFile::calc_column_widths()
             columns = std::max( entry->get_column_count(), columns );
     }
 
-    column_widths.clear();
     column_widths.resize( columns );
 
     for ( int i=0; i < get_entry_count(); ++i )
@@ -146,19 +151,28 @@ void ColumnConfigFile::calc_column_widths()
 
         if ( entry )
         {
-            for ( int col=0; col < columns; ++col )
+            for ( int col=0; col < entry->get_column_count(); ++col )
             {
                 int width = entry->get_column( col ).size();
                 int max   = get_max_column_width( col );
 
-                if ( max > 0 && width > max )
-                    width = max;
+                // Only take the width of this column of this entry into
+                // account if it is not wider than the maximum for this column;
+                // otherwise we will always end up with the maximum width for
+                // any column that has just one item the maximum width, but for
+                // that one item the maximum will be exceeded anyway (otherwise
+                // we'd have to cut if off which we clearly can't). So oversize
+                // column items should not be part of this calculation; we want
+                // to know the widths of the "normal" items only.
 
-                column_widths[ col ] = std::max( column_widths[ col ], width );
+                if ( max == 0 || width <= max )
+                    column_widths[ col ] = std::max( column_widths[ col ], width );
             }
         }
     }
 
+#if 0
     for ( int col=0; col < columns; ++col )
         std::cout << "Col " << col << " width: " << column_widths[col] << std::endl;
+#endif
 }

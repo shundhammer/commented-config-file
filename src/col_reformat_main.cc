@@ -39,6 +39,8 @@ int main( int argc, char *argv[] )
     file.set_max_column_width( n++,  1 ); // dump priority
     file.set_max_column_width( n++,  1 ); // fsck pass
 
+    // file.set_pad_columns( false );
+
     string_vec lines = file.format_lines();
 
     for ( size_t i=0; i < lines.size(); ++i )
