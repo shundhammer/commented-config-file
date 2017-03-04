@@ -14,7 +14,7 @@ void usage();
 
 void usage()
 {
-    cerr << "\nUsage: col_demo <infile-name>\n" << endl;
+    cerr << "\nUsage: col_reformat <infile-name>\n" << endl;
     exit( 1 );
 }
 
