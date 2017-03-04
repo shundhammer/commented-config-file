@@ -4,3 +4,4 @@ Makefile.in
 .deps
 ccf_demo
 col_demo
+col_reformat
