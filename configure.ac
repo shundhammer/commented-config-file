@@ -1,6 +1,6 @@
 
 AC_INIT(commented-config-file, 0.8)
-AC_CONFIG_SRCDIR(src/main.cc)
+AC_CONFIG_SRCDIR(src/CommentedConfigFile.cc)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
