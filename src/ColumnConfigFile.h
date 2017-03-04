@@ -103,7 +103,8 @@ public:
     virtual string_vec format_lines();
 
     /**
-     * Return the best column width for a column.
+     * Return the best column width for a column. If a maximum width for this
+     * column is set, this returns no more than the maximum width.
      **/
     virtual int get_column_width( int column );
 
@@ -117,13 +118,18 @@ public:
      **/
     void set_max_column_width( int column, int new_size );
 
+    /**
+     * Set a maximum column width for all columns. 0 means unlimited.
+     **/
+    void set_max_column_width( int new_size );
+
 protected:
 
     void calc_column_widths();
 
-    vector<int> max_column_widths;
     vector<int> column_widths;
-
+    vector<int> max_column_widths;
+    int         max_column_width;
 };
 
 #endif // ColumnConfigFile_h

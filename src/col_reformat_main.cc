@@ -29,6 +29,16 @@ int main( int argc, char *argv[] )
     ColumnConfigFile file;
     file.read( filename );
 
+    // Values that are reasonable for /etc/fstab
+
+    int n=0;
+    file.set_max_column_width( n++, 45 ); // device; just enough for UUID=...
+    file.set_max_column_width( n++, 15 ); // mount point
+    file.set_max_column_width( n++,  6 ); // fs type
+    file.set_max_column_width( n++, 30 ); // mount options
+    file.set_max_column_width( n++,  1 ); // dump priority
+    file.set_max_column_width( n++,  1 ); // fsck pass
+
     string_vec lines = file.format_lines();
 
     for ( size_t i=0; i < lines.size(); ++i )

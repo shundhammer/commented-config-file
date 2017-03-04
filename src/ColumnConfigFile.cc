@@ -5,13 +5,15 @@
  * License: GPL V2 - see file LICENSE for details
  **/
 
+#include <iostream>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 
 #include "ColumnConfigFile.h"
 
 
-#define WHITESPACE " \t"
+#define WHITESPACE                      " \t"
+#define DEFAULT_MAX_COLUMN_WIDTH        40
 
 
 string ColumnConfigFile::Entry::format()
@@ -23,7 +25,22 @@ string ColumnConfigFile::Entry::format()
         if ( ! result.empty() )
             result += "  ";
 
-        result += columns[i];
+        string col = columns[i];
+
+        if ( parent )
+        {
+            ColumnConfigFile * col_parent = dynamic_cast<ColumnConfigFile *>( parent );
+
+            if ( col_parent )
+            {
+                size_t field_width = col_parent->get_column_width( i );
+
+                if ( col.size() < field_width ) // Pad to desired width
+                    col += string( field_width - col.size(), ' ' );
+            }
+        }
+
+        result += col;
     }
 
     return result;
@@ -55,7 +72,8 @@ string_vec ColumnConfigFile::Entry::split( const string & line ) const
 
 
 ColumnConfigFile::ColumnConfigFile():
-    CommentedConfigFile()
+    CommentedConfigFile(),
+    max_column_width( DEFAULT_MAX_COLUMN_WIDTH )
 {
 
 }
@@ -80,17 +98,17 @@ int ColumnConfigFile::get_column_width( int column )
     if ( column_widths.empty() )
         calc_column_widths();
 
-    if ( column < (int) column_widths.size() )
-        return column_widths[ column ];
-    else
+    if ( column >= (int) column_widths.size() )
         return 0;
+    else
+        return column_widths[ column ];
 }
 
 
 int ColumnConfigFile::get_max_column_width( int column )
 {
     if ( column >= (int) max_column_widths.size() )
-        return 0;
+        return max_column_width;
     else
         return max_column_widths[ column ];
 }
@@ -124,13 +142,13 @@ void ColumnConfigFile::calc_column_widths()
     for ( int i=0; i < get_entry_count(); ++i )
     {
         ColumnConfigFile::Entry * entry =
-            dynamic_cast<ColumnConfigFile::Entry*>( get_entry( 0 ) );
+            dynamic_cast<ColumnConfigFile::Entry*>( get_entry( i ) );
 
         if ( entry )
         {
             for ( int col=0; col < columns; ++col )
             {
-                int width = entry->get_column(i).size();
+                int width = entry->get_column( col ).size();
                 int max   = get_max_column_width( col );
 
                 if ( max > 0 && width > max )
@@ -140,4 +158,7 @@ void ColumnConfigFile::calc_column_widths()
             }
         }
     }
+
+    for ( int col=0; col < columns; ++col )
+        std::cout << "Col " << col << " width: " << column_widths[col] << std::endl;
 }
