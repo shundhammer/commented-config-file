@@ -104,7 +104,7 @@ You can add them to a library or to an application.
 
 Ubuntu:
 
-    sudo apt-get install libboost-dev
+    sudo apt-get install libboost-dev libboost-test-dev
 
 
 ## Running the Test Suite
