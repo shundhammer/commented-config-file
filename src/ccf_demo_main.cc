@@ -41,21 +41,21 @@ int main( int argc, char *argv[] )
     {
         CommentedConfigFile::Entry * entry = file.get_entry( i );
 
-        if ( ! entry->comment_before.empty() )
+        if ( ! entry->get_comment_before().empty() )
             cout << endl;
 
-        for ( size_t j=0; j < entry->comment_before.size(); ++j )
+        for ( size_t j=0; j < entry->get_comment_before().size(); ++j )
         {
             cout << "  Entry #" << i+1
                  << " comment " << j+1
-                 << ": " << entry->comment_before[j]
+                 << ": " << entry->get_comment_before()[j]
                  << endl;
         }
 
-        cout << "  Entry #" << i+1 << " content  : " << entry->content << endl;
+        cout << "  Entry #" << i+1 << " content  : " << entry->get_content() << endl;
 
-        if ( ! entry->line_comment.empty() )
-            cout << "  Entry #" << i+1 << " line coment: " << entry->line_comment << endl;
+        if ( ! entry->get_line_comment().empty() )
+            cout << "  Entry #" << i+1 << " line coment: " << entry->get_line_comment() << endl;
     }
 
     cout << "</Content>\n" << endl;

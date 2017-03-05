@@ -137,6 +137,7 @@ public:
      **/
     void set_max_column_width( int new_size );
 
+
 protected:
 
     void calc_column_widths();

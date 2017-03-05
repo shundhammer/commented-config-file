@@ -27,9 +27,9 @@ string ColumnConfigFile::Entry::format()
 
         string col = columns[i];
 
-        if ( parent )
+        if ( get_parent() )
         {
-            ColumnConfigFile * col_parent = dynamic_cast<ColumnConfigFile *>( parent );
+            ColumnConfigFile * col_parent = dynamic_cast<ColumnConfigFile *>( get_parent() );
 
             if ( col_parent && col_parent->get_pad_columns() )
             {
@@ -49,7 +49,7 @@ string ColumnConfigFile::Entry::format()
 
 bool ColumnConfigFile::Entry::parse( const string & line )
 {
-    content = line;
+    set_content( line );
     columns = split( line );
 
     return true;

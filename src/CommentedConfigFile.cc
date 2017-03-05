@@ -59,7 +59,7 @@ CommentedConfigFile::Entry * CommentedConfigFile::take( int index )
 
     Entry * entry = entries[ index ];
     entries.erase( entries.begin() + index );
-    entry->parent = 0;
+    entry->set_parent( 0 );
 
     return entry;
 }
@@ -77,14 +77,14 @@ void CommentedConfigFile::remove( int index )
 void CommentedConfigFile::insert( int before, Entry * entry )
 {
     entries.insert( entries.begin() + before, entry );
-    entry->parent = this;
+    entry->set_parent( this );
 }
 
 
 void CommentedConfigFile::append( Entry * entry )
 {
     entries.push_back( entry );
-    entry->parent = this;
+    entry->set_parent( this );
 }
 
 
@@ -176,11 +176,13 @@ bool CommentedConfigFile::parse_entries( const string_vec & lines,
             if ( ! entry )
                 throw std::runtime_error( "CommentedConfigFile::create_entry() returned NULL" );
 
-            entry->comment_before = comment_before;
+            entry->set_comment_before( comment_before );
             comment_before.clear();
             string content;
-            split_off_comment( line, content, entry->line_comment );
+            string line_comment;
+            split_off_comment( line, content, line_comment );
             append( entry );
+            entry->set_line_comment( line_comment );
             bool success = entry->parse( content );
 
             if ( ! success )
@@ -255,13 +257,13 @@ string_vec CommentedConfigFile::format_lines()
     {
         Entry * entry = entries[i];
 
-        for ( size_t j=0; j < entry->comment_before.size(); ++j )
-            lines.push_back( entry->comment_before[j] );
+        for ( size_t j=0; j < entry->get_comment_before().size(); ++j )
+            lines.push_back( entry->get_comment_before()[j] );
 
         string line = entry->format();
 
-        if ( ! entry->line_comment.empty() )
-            line += " " + entry->line_comment;
+        if ( ! entry->get_line_comment().empty() )
+            line += " " + entry->get_line_comment();
 
         lines.push_back( line );
     }

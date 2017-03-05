@@ -21,18 +21,18 @@ BOOST_AUTO_TEST_CASE( container_operations )
     CommentedConfigFile::Entry * entry_e = new CommentedConfigFile::Entry();
     CommentedConfigFile::Entry * entry   = 0;
 
-    entry_a->content = "Entry A";
-    entry_b->content = "Entry B";
-    entry_c->content = "Entry C";
-    entry_d->content = "Entry D";
-    entry_e->content = "Entry E";
+    entry_a->set_content( "Entry A" );
+    entry_b->set_content( "Entry B" );
+    entry_c->set_content( "Entry C" );
+    entry_d->set_content( "Entry D" );
+    entry_e->set_content( "Entry E" );
 
     CommentedConfigFile subject;
 
     BOOST_CHECK_EQUAL( subject.empty(), true );
 
-    BOOST_CHECK_EQUAL( entry_a->parent, (void *) 0);
-    BOOST_CHECK_EQUAL( entry_c->parent, (void *) 0);
+    BOOST_CHECK_EQUAL( entry_a->get_parent(), (void *) 0);
+    BOOST_CHECK_EQUAL( entry_c->get_parent(), (void *) 0);
 
     subject << entry_b << entry_d << entry_e;
 
@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE( container_operations )
     BOOST_CHECK_EQUAL( subject.get_entry(1), entry_d );
     BOOST_CHECK_EQUAL( subject.get_entry(2), entry_e );
 
-    BOOST_CHECK_EQUAL( entry_d->parent, &subject );
-    BOOST_CHECK_EQUAL( entry_e->parent, &subject );
+    BOOST_CHECK_EQUAL( entry_d->get_parent(), &subject );
+    BOOST_CHECK_EQUAL( entry_e->get_parent(), &subject );
 
     subject.insert( 1, entry_c );
 
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE( container_operations )
     BOOST_CHECK_EQUAL( subject.get_entry(2), entry_d );
     BOOST_CHECK_EQUAL( subject.get_entry(3), entry_e );
 
-    BOOST_CHECK_EQUAL( entry_c->parent, &subject );
+    BOOST_CHECK_EQUAL( entry_c->get_parent(), &subject );
 
     subject.insert( 0, entry_a );
 
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE( container_operations )
     entry = subject.take( 3 );
 
     BOOST_CHECK_EQUAL( entry, entry_d );
-    BOOST_CHECK_EQUAL( entry_d->parent, (void *) 0);
+    BOOST_CHECK_EQUAL( entry_d->get_parent(), (void *) 0);
 
     BOOST_CHECK_EQUAL( subject.get_entry_count(), 4 );
     BOOST_CHECK_EQUAL( subject.get_entry(0), entry_a );

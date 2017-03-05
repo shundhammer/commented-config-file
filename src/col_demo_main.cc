@@ -50,15 +50,15 @@ int main( int argc, char *argv[] )
 
         cout << "  <Entry #" << i+1 << ">" << endl;
 
-        for ( size_t j=0; j < entry->comment_before.size(); ++j )
+        for ( size_t j=0; j < entry->get_comment_before().size(); ++j )
         {
             cout << "    Entry #" << i+1
                  << " comment " << j+1
-                 << ": " << entry->comment_before[j]
+                 << ": " << entry->get_comment_before()[j]
                  << endl;
         }
 
-        if ( ! entry->comment_before.empty() )
+        if ( ! entry->get_comment_before().empty() )
             cout << "    -----" << endl;
 
         for ( int col = 0; col < entry->get_column_count(); ++col )
@@ -70,11 +70,11 @@ int main( int argc, char *argv[] )
         }
 
 
-        if ( ! entry->line_comment.empty() )
+        if ( ! entry->get_line_comment().empty() )
         {
             cout << "    Entry #" << i+1
                  << " line coment: "
-                 << entry->line_comment
+                 << entry->get_line_comment()
                  << endl;
         }
 

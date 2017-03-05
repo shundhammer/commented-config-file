@@ -124,6 +124,68 @@ public:
 	virtual bool parse( const string & line )
 	    { content = line; return true; }
 
+        /**
+         * Return the string content of this entry.
+         **/
+        string get_content() const { return content; }
+
+        /**
+         * Set the string content of this entry.
+         *
+         * This should not normally be necessary; the default parse() function
+         * does that implicitly.
+         **/
+        void set_content( const string & new_content ) { content = new_content; }
+
+        /**
+         * Return the comment block before this entry: Empty lines or lines
+         * starting with the comment marker ("#") as their first non-whitspace
+         * character.
+         **/
+        const string_vec & get_comment_before() const { return comment_before; }
+
+        /**
+         * Set the comment block before this entry.
+         **/
+        void set_comment_before( const string_vec & new_comment_before )
+            { comment_before = new_comment_before; }
+
+        /**
+         * Return the comment on the same line as this entry's content.
+         *
+         * This will usually be an empty string. If it is non-empty, it will
+         * start with the comment marker ("#").
+         **/
+        string get_line_comment() const { return line_comment; }
+
+        /**
+         * Set the comment on the same line as this entry's comment.
+         * This string should start with the comment marker ("#").
+         **/
+        void set_line_comment( const string & new_comment )
+            { line_comment = new_comment; }
+
+        /**
+         * Return the Parent CommentConfigFile or 0 if this entry is not
+         * currently n a CommentConfigFile's entries.
+         **/
+        CommentedConfigFile * get_parent() const { return parent; }
+
+        /**
+         * Set this entry's CommentedConfigFile parent.
+         *
+         * This is done automatically when this entry is added to a
+         * CommentedConfigFile's entries, and it is set to 0 when it is removed
+         * from there (with take() or remove() ).
+         *
+         * This is meant to be used by the parent CommentedConfigFile only.
+         * Use outside of this only if you know what you are doing.
+         **/
+        void set_parent( CommentedConfigFile * new_parent )
+            { parent = new_parent; }
+
+    private:
+
 	//
 	// Data members
 	//
@@ -132,9 +194,6 @@ public:
 	string	   line_comment;   // at the end of the line
 	string	   content;
 
-	// Parent CommentConfigFile. This is set when this entry is added to
-	// the CommentConfigFile's entries, and it is set to 0 when it is
-	// removed from there (take(), remove()).
 	CommentedConfigFile * parent;
     };
 
@@ -223,7 +282,7 @@ public:
      * Convenience method because it is probably the most used:
      * Return the content of entry no. 'index'.
      **/
-    string get_content( int index ) { return get_entry( index )->content; }
+    string get_content( int index ) { return get_entry( index )->get_content(); }
 
     /**
      * Clear and delete all entries. This leaves the header and footer comments
@@ -281,12 +340,26 @@ public:
     /**
      * Return the header comments (including empty lines).
      **/
-    string_vec & get_header_comments() { return header_comments; }
+    const string_vec & get_header_comments() { return header_comments; }
+
+    /**
+     * Set the header comments. Each line should be an empty line or a line
+     * with the comment marker ("#") as the first non-whitespace character.
+     **/
+    void set_header_comments( const string_vec & new_comments )
+        { header_comments = new_comments; }
 
     /**
      * Return the footer comments (including empty lines).
      **/
-    string_vec & get_footer_comments() { return footer_comments; }
+    const string_vec & get_footer_comments() { return footer_comments; }
+
+    /**
+     * Set the footer comments. Each line should be an empty line or a line
+     * with the comment marker ("#") as the first non-whitespace character.
+     **/
+    void set_footer_comments( const string_vec & new_comments )
+        { footer_comments = new_comments; }
 
     /**
      * Get the last filename content was read from. This may be empty.
