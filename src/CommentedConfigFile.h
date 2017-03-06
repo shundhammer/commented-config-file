@@ -127,7 +127,7 @@ public:
         /**
          * Return the string content of this entry.
          **/
-        string get_content() const { return content; }
+        const string & get_content() const { return content; }
 
         /**
          * Set the string content of this entry.
@@ -156,7 +156,7 @@ public:
          * This will usually be an empty string. If it is non-empty, it will
          * start with the comment marker ("#").
          **/
-        string get_line_comment() const { return line_comment; }
+        const string & get_line_comment() const { return line_comment; }
 
         /**
          * Set the comment on the same line as this entry's comment.
@@ -282,7 +282,7 @@ public:
      * Convenience method because it is probably the most used:
      * Return the content of entry no. 'index'.
      **/
-    string get_content( int index ) { return get_entry( index )->get_content(); }
+    const string & get_content( int index ) { return get_entry( index )->get_content(); }
 
     /**
      * Clear and delete all entries. This leaves the header and footer comments
@@ -369,7 +369,7 @@ public:
     /**
      * Return the comment marker (default: "#").
      **/
-    string get_comment_marker() const { return comment_marker; }
+    const string & get_comment_marker() const { return comment_marker; }
 
     /**
      * Set the comment marker for subsequent read() and parse() operations.

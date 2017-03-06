@@ -60,7 +60,7 @@ public:
 	/**
 	 * Return one of the columns for this entry.
 	 **/
-	string get_column( int i ) const { return columns[i]; }
+	const string & get_column( int i ) const { return columns[i]; }
 
 	/**
 	 * Set a new value for column no. 'i'.
