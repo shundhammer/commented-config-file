@@ -181,3 +181,11 @@ void ColumnConfigFile::calc_column_widths()
         std::cout << "Col " << col << " width: " << column_widths[col] << std::endl;
 #endif
 }
+
+
+ColumnConfigFile::Entry * ColumnConfigFile::get_entry( int index ) const
+{
+    CommentedConfigFile::Entry * entry = get_entry( index );
+
+    return entry ? dynamic_cast<ColumnConfigFile::Entry *>( entry ) : 0;
+}

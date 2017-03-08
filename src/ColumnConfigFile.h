@@ -152,6 +152,14 @@ public:
      **/
     void set_max_column_width( int new_size );
 
+    /**
+     * Return entry no. 'index' or 0 if 'index' is out of range.
+     *
+     * This is a covariant of the (non-virtual) base class method to reduce
+     * the number of dynamic_casts.
+     **/
+    ColumnConfigFile::Entry * get_entry( int index ) const;
+
 
 protected:
 
