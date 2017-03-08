@@ -47,8 +47,10 @@ string ColumnConfigFile::Entry::format()
 }
 
 
-bool ColumnConfigFile::Entry::parse( const string & line )
+bool ColumnConfigFile::Entry::parse( const string & line, int line_no )
 {
+    (void) line_no;
+
     set_content( line );
     columns = split( line );
 
@@ -139,7 +141,10 @@ void ColumnConfigFile::calc_column_widths()
             dynamic_cast<ColumnConfigFile::Entry*>( get_entry( i ) );
 
         if ( entry )
+        {
+            entry->populate_columns();
             columns = std::max( entry->get_column_count(), columns );
+        }
     }
 
     column_widths.resize( columns );

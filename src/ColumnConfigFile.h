@@ -45,12 +45,21 @@ public:
 	 **/
 	virtual string format();
 
+        /**
+         * Populate the columns. This is called just prior to calculating the
+         * column widths and formatting the columns. Derived classes can use
+         * this to fill the columns with values from any other fields.
+         **/
+        virtual void populate_columns() {}
+
 	/**
 	 * Parse a content line. Return 'true' on success, 'false' on error.
+         * 'line_no' (if >0) is the line number in the current file. This can
+         * be used for error reporting.
 	 *
 	 * Reimplemented from CommentedConfigFile.
 	 **/
-	virtual bool parse( const string & line );
+	virtual bool parse( const string & line, int line_no );
 
 	/**
 	 * Return the number of columns for this entry.
@@ -77,6 +86,12 @@ public:
 	 * Split a line into fields and return them.
 	 **/
 	virtual string_vec split( const string & line ) const;
+
+        /**
+         * Set the number of columns
+         **/
+        void set_column_count( int count )
+            { columns.resize( count ); }
 
     private:
 
