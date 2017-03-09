@@ -15,6 +15,9 @@
 #define WHITESPACE                      " \t"
 #define DEFAULT_MAX_COLUMN_WIDTH        40
 
+using std::cout;
+using std::endl;
+
 
 string ColumnConfigFile::Entry::format()
 {
@@ -178,14 +181,15 @@ void ColumnConfigFile::calc_column_widths()
 
 #if 0
     for ( int col=0; col < columns; ++col )
-        std::cout << "Col " << col << " width: " << column_widths[col] << std::endl;
+        cout << "Col " << col << " width: " << column_widths[col] << endl;
 #endif
 }
 
 
 ColumnConfigFile::Entry * ColumnConfigFile::get_entry( int index ) const
 {
-    CommentedConfigFile::Entry * entry = get_entry( index );
+    CommentedConfigFile::Entry * entry =
+        CommentedConfigFile::get_entry( index );
 
     return entry ? dynamic_cast<ColumnConfigFile::Entry *>( entry ) : 0;
 }

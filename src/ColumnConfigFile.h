@@ -5,11 +5,11 @@
  * License: GPL V2 - see file LICENSE for details
  **/
 
-
 #ifndef ColumnConfigFile_h
 #define ColumnConfigFile_h
 
 #include "CommentedConfigFile.h"
+
 
 /**
  * Utility class to read and write column-oriented config files that might

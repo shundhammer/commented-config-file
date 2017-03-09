@@ -5,7 +5,6 @@
  * License: GPL V2 - see file LICENSE for details
  **/
 
-
 #ifndef CommentedConfigFile_h
 #define CommentedConfigFile_h
 
@@ -279,7 +278,7 @@ public:
     /**
      * Return entry no. 'index' or 0 if 'index' is out of range.
      **/
-    Entry * get_entry( int index );
+    Entry * get_entry( int index ) const;
 
     /**
      * Convenience method because it is probably the most used:
@@ -301,7 +300,7 @@ public:
     /**
      * Return the index of 'entry' or -1 if there is no such entry.
      **/
-    int get_index_of( const Entry * entry );
+    int get_index_of( const Entry * entry ) const;
 
     /**
      * Take the entry with the specified index out of the entries and return
