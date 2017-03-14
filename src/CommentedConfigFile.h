@@ -319,6 +319,11 @@ public:
     void remove( int index );
 
     /**
+     * Remove an entry and delete it.
+     **/
+    void remove( Entry * entry );
+
+    /**
      * Insert 'entry' before index 'before'.
      * This transfers ownership of the entry to this class.
      **/
