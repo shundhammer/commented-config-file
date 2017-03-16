@@ -19,7 +19,8 @@ using std::endl;
 
 
 CommentedConfigFile::CommentedConfigFile():
-    comment_marker( "#" )
+    comment_marker( "#" ),
+    diff_enabled( false )
 {
 }
 
@@ -171,6 +172,9 @@ bool CommentedConfigFile::parse( const string_vec & lines )
     }
 
     bool success = parse_entries( lines, content_start, content_end );
+
+    if ( diff_enabled )
+        save_orig();
 
     return success;
 }
@@ -368,4 +372,104 @@ void CommentedConfigFile::strip_trailing_whitespace( string & line )
         line = line.substr( 0,  pos+1 );
     else
         line.clear();
+}
+
+
+string_vec CommentedConfigFile::diff()
+{
+    return diff( orig_lines, format_lines() );;
+}
+
+
+string_vec CommentedConfigFile::diff( const string_vec & formatted_lines )
+{
+    return diff( orig_lines, formatted_lines );
+}
+
+
+void CommentedConfigFile::save_orig()
+{
+    save_orig( format_lines() );
+}
+
+
+void CommentedConfigFile::save_orig( const string_vec & new_orig_lines )
+{
+    orig_lines = new_orig_lines;
+}
+
+
+string_vec CommentedConfigFile::diff( const string_vec & old_lines,
+                                      const string_vec & new_lines )
+{
+    string_vec result;
+
+    int old_start = 0;
+    int old_end   = old_lines.size() - 1;
+
+    int new_start = 0;
+    int new_end   = new_lines.size() - 1;
+
+
+    while ( old_start < old_end || new_start < new_end )
+    {
+        // Skip common lines at the start
+
+        while ( old_start <= old_end && new_start <= new_end &&
+                old_lines[ old_start ] == new_lines[ new_start ] )
+        {
+            // cout << "Skipping common start: " << old_lines[ old_start ] << endl;
+            ++old_start;
+            ++new_start;
+        }
+
+        // Skip common lines at the end
+
+        while ( old_end > old_start && new_end > new_start &&
+                old_lines[ old_end ] == new_lines[ new_end ] )
+        {
+            // cout << "Skipping common end  : " << old_lines[ old_end ] << endl;
+            --old_end;
+            --new_end;
+        }
+
+
+        // Check if there is a diff at all
+
+        if ( old_start <= old_end )
+        {
+            // cout << "We have a diff" << endl;
+            const string & old_line = old_lines[ old_start ];
+            int moved_pos = -1;
+
+            // Try to find the old line at another position in the new lines
+
+            for ( int i = new_start; i < new_end && moved_pos == -1; ++i )
+            {
+                if ( new_lines[i] == old_line )
+                    moved_pos = i;
+            }
+
+            if ( moved_pos == -1 ) // The old line was deleted
+            {
+                cout << "Deleted: " << old_line << endl;
+                result.push_back( string( "-" ) + old_line );
+                ++old_start;
+            }
+            else
+            {
+                int inserted_lines = moved_pos - new_start;
+
+                for ( int i=0; i < inserted_lines; ++i )
+                    result.push_back( string( "+" ) + new_lines[ new_start + i ] );
+
+                new_start += inserted_lines;
+            }
+        }
+    }
+
+    while ( new_start < new_end )
+        result.push_back( string( "+" ) + new_lines[ new_start++ ] );
+
+    return result;
 }

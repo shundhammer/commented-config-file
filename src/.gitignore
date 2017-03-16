@@ -3,5 +3,6 @@ Makefile.in
 *.o
 .deps
 ccf_demo
+ccf_diff
 col_demo
 col_reformat
