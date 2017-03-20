@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
     string_vec diff = CommentedConfigFile::diff( file1.format_lines(),
                                                  file2.format_lines() );
 
-    cout << "Diff size: " << diff.size() << "\n" << endl;
+    // cout << "Diff size: " << diff.size() << "\n" << endl;
     
     for ( size_t i=0; i < diff.size(); ++i )
     {

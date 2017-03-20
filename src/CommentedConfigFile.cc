@@ -402,7 +402,7 @@ void CommentedConfigFile::save_orig( const string_vec & new_orig_lines )
 string_vec CommentedConfigFile::diff( const string_vec & old_lines,
                                       const string_vec & new_lines )
 {
-    string_vec result;
+    string_vec diff_lines;
 
     int old_start = 0;
     int old_end   = old_lines.size() - 1;
@@ -411,7 +411,7 @@ string_vec CommentedConfigFile::diff( const string_vec & old_lines,
     int new_end   = new_lines.size() - 1;
 
 
-    while ( old_start < old_end || new_start < new_end )
+    // while ( old_start < old_end || new_start < new_end )
     {
         // Skip common lines at the start
 
@@ -434,11 +434,20 @@ string_vec CommentedConfigFile::diff( const string_vec & old_lines,
         }
 
 
+        while ( old_start <= old_end )
+            diff_lines.push_back( string( "-" ) + old_lines[ old_start++ ] );
+
+        while ( new_start <= new_end )
+            diff_lines.push_back( string( "+" ) + new_lines[ new_start++ ] );
+
+#if 0
         // Check if there is a diff at all
 
-        if ( old_start <= old_end )
+        if ( old_start < old_end || new_start < new_end )
         {
             // cout << "We have a diff" << endl;
+
+
             const string & old_line = old_lines[ old_start ];
             int moved_pos = -1;
 
@@ -466,10 +475,8 @@ string_vec CommentedConfigFile::diff( const string_vec & old_lines,
                 new_start += inserted_lines;
             }
         }
+#endif
     }
 
-    while ( new_start < new_end )
-        result.push_back( string( "+" ) + new_lines[ new_start++ ] );
-
-    return result;
+    return diff_lines;
 }
