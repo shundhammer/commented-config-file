@@ -402,81 +402,135 @@ void CommentedConfigFile::save_orig( const string_vec & new_orig_lines )
 string_vec CommentedConfigFile::diff( const string_vec & old_lines,
                                       const string_vec & new_lines )
 {
+    return diff( old_lines, 0, old_lines.size() - 1,
+                 new_lines, 0, new_lines.size() - 1 );
+}
+
+
+string_vec CommentedConfigFile::diff( const string_vec & old_lines,
+                                      int old_start, int old_end,
+                                      const string_vec & new_lines,
+                                      int new_start, int new_end )
+{
     string_vec diff_lines;
 
-    int old_start = 0;
-    int old_end   = old_lines.size() - 1;
+    // Skip common lines at the start
 
-    int new_start = 0;
-    int new_end   = new_lines.size() - 1;
-
-
-    // while ( old_start < old_end || new_start < new_end )
+    while ( old_start <= old_end && new_start <= new_end &&
+            old_lines[ old_start ] == new_lines[ new_start ] )
     {
-        // Skip common lines at the start
+        ++old_start;
+        ++new_start;
+    }
 
-        while ( old_start <= old_end && new_start <= new_end &&
-                old_lines[ old_start ] == new_lines[ new_start ] )
+    // Skip common lines at the end
+
+    while ( old_end > old_start && new_end > new_start &&
+            old_lines[ old_end ] == new_lines[ new_end ] )
+    {
+        --old_end;
+        --new_end;
+    }
+
+
+    // Check if there is a diff at all
+
+    if ( old_start <= old_end || new_start <= new_end )
+    {
+        // Find longest common subsequence
+
+        int common_pos_old = old_start;
+        int common_pos_new = new_start;
+        int common_len = 0;
+
+        common_len = find_common_subsequence( old_lines, old_start, old_end,
+                                              new_lines, new_start, new_end,
+                                              common_pos_old, common_pos_new );
+
+        if ( common_len > 0 )
         {
-            // cout << "Skipping common start: " << old_lines[ old_start ] << endl;
-            ++old_start;
-            ++new_start;
+            // Cut in two parts and recurse
+
+            string_vec chunk1 =
+                diff( old_lines, old_start, common_pos_old - 1,
+                      new_lines, new_start, common_pos_new - 1 );
+
+            string_vec chunk2 =
+                diff( old_lines, common_pos_old + common_len, old_end,
+                      new_lines, common_pos_new + common_len, new_end );
+
+            for ( size_t i=0; i < chunk1.size(); ++i )
+                diff_lines.push_back( chunk1[i] );
+
+            for ( size_t i=0; i < chunk2.size(); ++i )
+                diff_lines.push_back( chunk2[i] );
         }
-
-        // Skip common lines at the end
-
-        while ( old_end > old_start && new_end > new_start &&
-                old_lines[ old_end ] == new_lines[ new_end ] )
+        else
         {
-            // cout << "Skipping common end  : " << old_lines[ old_end ] << endl;
-            --old_end;
-            --new_end;
+            // Chunk output
+
+            char chunk_header[255];
+            sprintf( chunk_header, "@@ -%d,%d +%d,%d @@",
+                     old_start + 1, old_end - old_start + 1,
+                     new_start + 1, new_end - new_start + 1);
+
+            diff_lines.push_back( string( chunk_header ) );
+
+
+            while ( old_start <= old_end )
+                diff_lines.push_back( string( "-" ) + old_lines[ old_start++ ] );
+
+            while ( new_start <= new_end )
+                diff_lines.push_back( string( "+" ) + new_lines[ new_start++ ] );
         }
-
-
-        while ( old_start <= old_end )
-            diff_lines.push_back( string( "-" ) + old_lines[ old_start++ ] );
-
-        while ( new_start <= new_end )
-            diff_lines.push_back( string( "+" ) + new_lines[ new_start++ ] );
-
-#if 0
-        // Check if there is a diff at all
-
-        if ( old_start < old_end || new_start < new_end )
-        {
-            // cout << "We have a diff" << endl;
-
-
-            const string & old_line = old_lines[ old_start ];
-            int moved_pos = -1;
-
-            // Try to find the old line at another position in the new lines
-
-            for ( int i = new_start; i < new_end && moved_pos == -1; ++i )
-            {
-                if ( new_lines[i] == old_line )
-                    moved_pos = i;
-            }
-
-            if ( moved_pos == -1 ) // The old line was deleted
-            {
-                cout << "Deleted: " << old_line << endl;
-                result.push_back( string( "-" ) + old_line );
-                ++old_start;
-            }
-            else
-            {
-                int inserted_lines = moved_pos - new_start;
-
-                for ( int i=0; i < inserted_lines; ++i )
-                    result.push_back( string( "+" ) + new_lines[ new_start + i ] );
-
-                new_start += inserted_lines;
-            }
-        }
-#endif
     }
 
     return diff_lines;
+}
+
+
+int CommentedConfigFile::find_common_subsequence( const string_vec old_lines,
+                                                  int old_start, int old_end,
+                                                  const string_vec & new_lines,
+                                                  int new_start, int new_end,
+                                                  int & common_pos_old_ret,
+                                                  int & common_pos_new_ret )
+{
+    common_pos_old_ret = old_end + 1;
+    common_pos_new_ret = new_end + 1;
+    int best_len = 0;
+
+    for ( int old_pos = old_start; old_pos <= old_end; ++old_pos )
+    {
+        const string & old_start_line = old_lines[ old_pos ];
+
+        for ( int new_pos = new_start; new_pos <= new_end; ++new_pos )
+        {
+            if ( old_start_line == new_lines[ new_pos ] ) // Found a sequence start
+            {
+                int i = old_pos + 1;
+                int j = new_pos + 1;
+
+                while ( i <= old_end && j <= new_end &&
+                        old_lines[ i ] == new_lines[ j ] )
+                {
+                    ++i;
+                    ++j;
+                }
+
+                int len = i - old_pos;
+
+                if ( len > best_len ) // This sequence is longer than the old one
+                {
+                    // Save the sequence we just found
+
+                    best_len = len;
+                    common_pos_old_ret = old_pos;
+                    common_pos_new_ret = new_pos;
+                }
+            }
+        }
+    }
+
+    return best_len;
 }

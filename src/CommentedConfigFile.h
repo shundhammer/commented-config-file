@@ -484,6 +484,25 @@ protected:
      **/
     bool parse_entries( const string_vec & lines, int from, int end );
 
+    /**
+     * Diff helper: Diff lines betwen start and end.
+     **/
+    static string_vec diff( const string_vec & old_lines,
+                            int old_start, int old_end,
+                            const string_vec & new_lines,
+                            int new_start, int new_end );
+
+    /**
+     * Diff helper: find longest common subsequence between start and
+     * end. Return the length of the sequence. Set the _ret parameters to the
+     * respective position where the sequence was found.
+     **/
+    static int find_common_subsequence( const string_vec old_lines,
+                                        int old_start, int old_end,
+                                        const string_vec & new_lines,
+                                        int new_start, int new_end,
+                                        int & common_pos_old_ret,
+                                        int & common_pos_new_ret );
 
 private:
 
