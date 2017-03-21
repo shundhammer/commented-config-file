@@ -3,6 +3,7 @@
 #include <string>
 
 #include "CommentedConfigFile.h"
+#include "Diff.h"
 
 using std::string;
 using std::cout;
@@ -30,8 +31,9 @@ int main( int argc, char *argv[] )
     CommentedConfigFile file2;
     file2.read( argv[2] );
 
-    string_vec diff = CommentedConfigFile::diff( file1.format_lines(),
-                                                 file2.format_lines() );
+    string_vec diff = Diff::diff( file1.format_lines(),
+                                  file2.format_lines(),
+                                  3 );
 
     // cout << "Diff size: " << diff.size() << "\n" << endl;
     
