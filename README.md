@@ -194,7 +194,7 @@ The content lines may all have the same number of columns (like in
 This is a generic Diff class for STL `vector<string>` that works just like the
 Linux `diff -u` command - with or without context lines, as configured.
 
-The `ccf_main` example can be used pretty much as a drop-in replacement for
+The `ccf_diff` example can be used pretty much as a drop-in replacement for
 `diff -u`.
 
 This Diff class may not always return the absolute minimum diff (or "edit

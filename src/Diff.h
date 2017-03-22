@@ -21,9 +21,6 @@ typedef vector<string> string_vec;
 
 /**
  * Class to diff string vectors against each other.
- *
- * The class itself is protected; use the static methods rather than
- * instantiating the class.
  **/
 class Diff
 {
