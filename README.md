@@ -4,6 +4,13 @@
 
 License: GPL V2
 
+## Overview
+
+- CommentedConfigFile class
+- ColumnConfigFile class
+- Generic Diff class for string vectors
+
+
 ## System Requirements:
 
 - C++
@@ -12,10 +19,10 @@ License: GPL V2
 - Autotools (just for the demo programs and the test suite)
 
 This class should work on Linux/BSD/Unix-like systems and on all kinds of MS
-Windows. It's just a C++ class after all.
+Windows. It's just some C++ classes after all.
 
 
-## Overview
+## CommentedConfigFile
 
 This is a utility class for C++ to read and write config files that might
 contain comments.  This class tries to preserve any existing comments and keep
@@ -170,3 +177,33 @@ Of course that has limitations. If a comment does not belong to the next entry,
 but to the previous one, it is moved to the wrong location. That's life. But
 it's much better than throwing away all comments every time a program touches a
 config file.
+
+
+## ColumnConfigFile
+
+This class is derived from CommentedConfigFile. In addition to the comment
+handling, this class also manages splitting up column-oriented config files
+into the columns.
+
+The content lines may all have the same number of columns (like in
+`/etc/fstab`), or they might have different numbers of columns.
+
+
+## Diff
+
+This is a generic Diff class for STL `vector<string>` that works just like the
+Linux `diff -u` command - with or without context lines, as configured.
+
+The `ccf_main` example can be used pretty much as a drop-in replacement for
+`diff -u`.
+
+This Diff class may not always return the absolute minimum diff (or "edit
+script"), but it will always be a human readable one.
+
+I had wondered why there is no ready-made class for this anywhere in STL or
+even Boost (or is there?); this is useful in many cases; for example, when
+writing just the changes done to a config file to the log. This is why this
+class is part of this little class library: It is ready to be used on the
+CommentedConfigFile level if you just configure diffs to be enabled there
+(which just saves the old lines at tactical points such as reading and parsing
+file content).
