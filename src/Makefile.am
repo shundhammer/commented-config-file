@@ -14,9 +14,7 @@ ccf_demo_SOURCES =		\
 
 ccf_diff_SOURCES =		\
 	ccf_diff_main.cc	\
-	CommentedConfigFile.cc  \
 	Diff.cc
-
 
 
 col_demo_SOURCES =		\

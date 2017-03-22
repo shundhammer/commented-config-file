@@ -1,8 +1,16 @@
+/**
+ * ccf_diff_main.cc
+ *
+ * This is a drop-in replacement for the 'diff -u' command.
+ *
+ * Author:  Stefan Hundhammer <Stefan.Hundhammer@gmx.de>
+ * License: GPL V2 - see file LICENSE for details
+ **/
 
+#include <fstream>
 #include <iostream>
 #include <string>
 
-#include "CommentedConfigFile.h"
 #include "Diff.h"
 
 using std::string;
@@ -12,6 +20,8 @@ using std::endl;
 
 
 void usage();
+string_vec read_file( const string & filename );
+
 
 void usage()
 {
@@ -20,25 +30,40 @@ void usage()
 }
 
 
+string_vec read_file( const string & filename )
+{
+    string_vec lines;
+
+    if ( ! filename.empty() )
+    {
+        string  line;
+        std::ifstream file( filename );
+
+        while ( std::getline( file, line ) )
+            lines.push_back( line );
+    }
+
+    return lines;
+}
+
+
 int main( int argc, char *argv[] )
 {
     if ( argc != 3 )
         usage();
 
-    CommentedConfigFile file1;
-    file1.read( argv[1] );
+    int context_len = 3;
 
-    CommentedConfigFile file2;
-    file2.read( argv[2] );
+    string filename1  = argv[1];
+    string filename2  = argv[2];
 
-    string_vec diff = Diff::diff( file1.format_lines(),
-                                  file2.format_lines(),
-                                  3 );
+    string_vec lines1 = read_file( filename1 );
+    string_vec lines2 = read_file( filename2 );
 
-    // cout << "Diff size: " << diff.size() << "\n" << endl;
-    
-    for ( size_t i=0; i < diff.size(); ++i )
-    {
-        cout << diff[i] << endl;
-    }
+    string_vec diff  = Diff::diff( lines1, lines2, context_len );
+    string_vec patch = Diff::format_patch_header( filename1, filename2 );
+    Diff::add_lines( patch, diff );
+
+    for ( size_t i=0; i < patch.size(); ++i )
+        cout << patch[i] << endl;
 }
