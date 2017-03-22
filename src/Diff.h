@@ -169,6 +169,19 @@ public:
      **/
     string_vec format_hunks();
 
+    /**
+     * Format a patch header like expected by the Linux patch(1) command:
+     *
+     *   --- filename_old
+     *   +++ filename_new
+     *
+     * This does not make the diff output prettier, but it can be fed directly
+     * to the 'patch' command. If there is no such header, the 'patch' command
+     * will complain "input contains only garbage".
+     **/
+    static string_vec format_patch_header( const string & filename_old,
+                                           const string & filename_new );
+
 
 protected:
     /**

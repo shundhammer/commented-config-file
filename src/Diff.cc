@@ -296,6 +296,18 @@ string_vec Diff::format_hunks()
 }
 
 
+string_vec Diff::format_patch_header( const string & filename_old,
+                                      const string & filename_new )
+{
+    string_vec result;
+
+    result.push_back( string( "--- " ) + filename_old );
+    result.push_back( string( "+++ " ) + filename_new );
+
+    return result;
+}
+
+
 
 
 string_vec Diff::Hunk::format() const
