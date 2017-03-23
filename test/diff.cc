@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 #include <boost/test/unit_test.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -13,18 +12,20 @@
 using std::cout;
 using std::endl;
 using std::ostream;
-using std::stringstream;
 
 
-ostream & operator<<( ostream & stream, const string_vec & lines )
+namespace std
 {
-    stream << endl;
+    ostream & operator<<( ostream & stream, const string_vec & lines )
+    {
+        stream << endl;
 
-    for ( size_t i=0; i < lines.size(); ++i )
-	stream << std::setfill('0') << std::setw(2) << i+1
-	       << ": \"" << lines[i] << "\"" << endl;
+        for ( size_t i=0; i < lines.size(); ++i )
+            stream << std::setfill('0') << std::setw(2) << i+1
+                   << ": \"" << lines[i] << "\"" << endl;
 
-    return stream;
+        return stream;
+    }
 }
 
 
@@ -35,24 +36,23 @@ check_diff( const string_vec & input_a,
 	    int		       context = 0 )
 {
     boost::test_tools::predicate_result result( false );
-    stringstream str;
 
     string_vec actual = Diff::diff( input_a, input_b, context );
 
-    if ( actual.size() != expected.size() )
+    if ( expected.size() != actual.size() )
     {
-	str << "Actual:" << actual << "\nExpected: " << expected;
-
-	result.message() << "Size mismatch: Actual size:"
-			 << actual.size()
+	result.message() << "\nSize mismatch: "
+                         << "Actual size:" << actual.size()
 			 << "; Expected size: " << expected.size()
-			 << "\n\n" << str.str();
+			 << "\n"
+                         << "\nActual:" << actual
+                         << "\nExpected: " << expected;
 	return result;
     }
 
 
     for ( size_t i = 0;
-	  i < expected.size() && i < actual.size();
+	  i < actual.size() && i < expected.size();
 	  ++i )
     {
 	if ( boost::starts_with( expected[i], "@@ ??" ) &&
@@ -61,12 +61,12 @@ check_diff( const string_vec & input_a,
 
 	if ( actual[i] != expected[i] )
 	{
-	    str << "Actual:" << actual << "\nExpected: " << expected;
-
-	    result.message() << "\n\nResult line #" << i+1 << " mismatch:"
+	    result.message() << "\n\nResult lines #" << i+1 << " mismatch:"
 			     << "\nActual   line: \"" << actual[i]   << "\""
 			     << "\nExpected line: \"" << expected[i] << "\""
-			     << "\n\n" << str.str();
+                             << "\n"
+                             << "\nActual:" << actual
+                             << "\nExpected: " << expected;
 	    return result;
 	}
     }
