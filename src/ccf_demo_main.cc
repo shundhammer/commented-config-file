@@ -55,7 +55,7 @@ int main( int argc, char *argv[] )
         cout << "  Entry #" << i+1 << " content  : " << entry->get_content() << endl;
 
         if ( ! entry->get_line_comment().empty() )
-            cout << "  Entry #" << i+1 << " line coment: " << entry->get_line_comment() << endl;
+            cout << "  Entry #" << i+1 << " line comment: " << entry->get_line_comment() << endl;
     }
 
     cout << "</Content>\n" << endl;
